@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - CBC Portal</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="login-body">
+  <div class="login-container">
+    <h2>Login to CBC Portal</h2>
+
+    <form id="loginForm" class="login-form">
+      <label for="role">Select Role</label>
+      <select id="role" name="role" required>
+        <option value="">-- Select User --</option>
+        <option value="student">Student</option>
+        <option value="teacher">Teacher</option>
+      </select>
+
+      <label for="firstname">First Name</label>
+      <input type="text" id="firstname" name="firstname" placeholder="Enter first name" required>
+
+      <label for="admission">Admission / Staff No</label>
+      <input type="password" id="admission" name="admission" placeholder="Enter number" required>
+
+      <button type="submit" class="btn">Login</button>
+      <p class="support">New user? <a href="signup.html">Sign Up here</a></p>
+      <p class="support">Need help? <a href="#">Contact Admin</a></p>
+    </form>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 CBC Student Portal. All Rights Reserved.</p>
+  </footer>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const roleEl = document.getElementById('role');
+      const firstnameEl = document.getElementById('firstname');
+      const admissionEl = document.getElementById('admission');
+
+      const role = roleEl?.value || "";
+      const firstname = firstnameEl?.value.trim() || "";
+      const admission = admissionEl?.value.trim() || "";
+
+      if (!role || !firstname || !admission) {
+        alert('Please fill in all fields.');
+        return;
+      }
+
+      // Teacher login validation
+      if (role === 'teacher') {
+        if (!admission.startsWith("T")) {
+          alert("Teacher staff number must start with 'T'");
+          return;
+        }
+
+        const user = {
+          role: "teacher",
+          firstname: String(firstname),
+          admission: String(admission),
+          isTeacher: true
+        };
+
+        localStorage.setItem('loggedInUser', JSON.stringify(user));
+        localStorage.setItem('userRole', 'teacher');
+        window.location.href = 'teacher-dashboard.html';
+        return;
+      }
+
+      // Student login
+      if (role === 'student') {
+        const user = {
+          role: "student",
+          firstname: String(firstname),
+          admission: String(admission),
+          isTeacher: false
+        };
+
+        localStorage.setItem('loggedInUser', JSON.stringify(user));
+        localStorage.setItem('userRole', 'student');
+        window.location.href = 'student-dashboard.html';
+        return;
+      }
+    });
+  </script>
+
+  <!-- Keep auth.js if it contains other logic you need -->
+  <script src="auth.js"></script>
+</body>
+</html>

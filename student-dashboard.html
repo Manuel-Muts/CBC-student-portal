@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - CBC Portal</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" />
+</head>
+  <script>
+    // Parse stored user safely and redirect if not a student
+    const _stored = localStorage.getItem('loggedInUser');
+    let user = null;
+    try {
+      user = _stored ? JSON.parse(_stored) : null;
+    } catch (err) {
+      // corrupted stored data — remove and redirect to login
+      localStorage.removeItem('loggedInUser');
+      localStorage.removeItem('userRole');
+      window.location.href = 'login.html';
+    }
+    if (!user || user.role !== 'student') {
+      window.location.href = 'login.html';
+    }
+  </script>
+</head>
+<body class="dashboard-body">
+  <body class="dashboard-body">
+
+  <aside class="sidebar">
+    <h2>CBC Portal</h2>
+    <ul>
+      <li class="active"><a href="#">🏠 Dashboard</a></li>
+      <li><a href="#">📈 My Performance</a></li>
+      <li><a href="#">📚 Study Materials</a></li>
+      <li><a href="#">🤖 AI Feedback</a></li>
+    </ul>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </aside>
+
+  <main class="dashboard-main">
+    <header class="dashboard-header">
+      <h2 id="welcomeMessage">Welcome, <span id="studentName"></span></h2>
+    </header>
+
+    <section class="marks-section">
+      <h2>Your Recent Performance</h2>
+      <p>📊 Personalized insights and AI feedback will appear here.</p>
+    </section>
+  </main>
+
+
+  <script>
+    (function () {
+      const stored = localStorage.getItem('loggedInUser');
+      if (!stored) { window.location.href = 'login.html'; return; }
+      try {
+        const u = JSON.parse(stored);
+        if (!u || u.role !== 'student') {
+          window.location.href = 'login.html';
+          return;
+        }
+        document.getElementById('welcomeMessage').textContent = 'Welcome, ' + (u.firstname || 'Student');
+      } catch (e) {
+        localStorage.removeItem('loggedInUser');
+        localStorage.removeItem('userRole');
+        window.location.href = 'login.html';
+      }
+    })();
+
+    function logout() {
+      localStorage.removeItem('loggedInUser');
+      localStorage.removeItem('userRole');
+      window.location.href = 'login.html';
+    }
+  </script>
+
+  <script src="protect.js"></script>
+</body>
+</html>

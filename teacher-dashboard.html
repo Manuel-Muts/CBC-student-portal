@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Teacher Dashboard - CBC Portal</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" />
+</head>
+<body class="dashboard-body">
+  <aside class="sidebar">
+    <h2>CBC Portal</h2>
+    <ul>
+      <li class="active"><a href="#">🏠 Dashboard</a></li>
+      <li><a href="#">🧮 Enter Marks</a></li>
+      <li><a href="#">📊 Reports</a></li>
+      <li><a href="#">⚙️ Settings</a></li>
+    </ul>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </aside>
+
+  <main class="dashboard-main">
+    <header class="dashboard-header">
+      <h2>Welcome, <span id="teacherName">Teacher</span></h2>
+      <div class="user-profile">
+        <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="profile" />
+      </div>
+    </header>
+
+    <section class="marks-section">
+      <h2>Enter Student Marks</h2>
+      <form id="marks-form">
+        <div class="form-group">
+          <label>Student Admission No</label>
+          <input type="text" id="admissionNo" placeholder="ADM001" required />
+        </div>
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <select id="subject" name="subject" required>
+            <option value="">-- Select Subject --</option>
+            <option value="mathematics">Mathematics</option>
+            <option value="english">English</option>
+            <option value="science">Science</option>
+            <option value="social-studies">Social Studies</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Strand</label>
+          <input type="text" id="strand" placeholder="e.g., Measurement" required />
+        </div>
+        <div class="form-group">
+          <label>Score</label>
+          <input type="number" id="score" placeholder="78" min="0" max="100" required />
+        </div>
+        <button type="submit" class="btn">Submit Marks</button>
+      </form>
+    </section>
+
+    <section class="marks-table">
+      <h2>Submitted Marks</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Admission No</th>
+            <th>Subject</th>
+            <th>Strand</th>
+            <th>Score</th>
+            <th>Level</th>
+          </tr>
+        </thead>
+        <tbody id="marksList"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const stored = localStorage.getItem("loggedInUser");
+      if (!stored) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      try {
+        const user = JSON.parse(stored);
+        if (!user || user.role !== "teacher") {
+          window.location.href = "login.html";
+          return;
+        }
+
+        // ✅ Set teacher name
+        const nameSpan = document.getElementById("teacherName");
+        if (nameSpan && user.firstname) {
+          nameSpan.textContent = user.firstname;
+        }
+      } catch (err) {
+        localStorage.removeItem("loggedInUser");
+        localStorage.removeItem("userRole");
+        window.location.href = "login.html";
+      }
+    });
+
+    function logout() {
+      localStorage.removeItem("loggedInUser");
+      localStorage.removeItem("userRole");
+      window.location.href = "login.html";
+    }
+  </script>
+
+  <script src="protect.js"></script>
+</body>
+</html>
