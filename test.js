@@ -1,0 +1,1 @@
+typeof "John Doe" // "string"

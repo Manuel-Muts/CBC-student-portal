@@ -290,7 +290,7 @@ footer {
   background: #004aad;
   color: white;
   width: 240px;
-  padding: 20px;
+  padding: 63px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -333,6 +333,9 @@ footer {
   border-radius: 6px;
   cursor: pointer;
   transition: 0.3s;
+  position: absolute;
+  top: 140px;
+  left: 100px;
 }
 
 .logout-btn:hover {
