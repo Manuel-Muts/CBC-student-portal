@@ -1,1 +1,0 @@
-typeof "John Doe" // "string"
