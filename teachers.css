@@ -187,3 +187,35 @@ form {
 .marks-table tr:nth-child(even) {
   background-color: #f9f9f9;
 }
+
+/* ==============================
+   ACTION BUTTONS
+============================== */
+.edit-btn,
+.delete-btn {
+  border: none;
+  padding: 6px 10px;
+  margin: 0 4px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.edit-btn {
+  background: #3182ce;
+  color: white;
+}
+
+.edit-btn:hover {
+  background: #225ea8;
+}
+
+.delete-btn {
+  background: #e53e3e;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #b83232;
+}

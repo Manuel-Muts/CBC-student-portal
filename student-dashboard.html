@@ -5,76 +5,92 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Dashboard - CBC Portal</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="student.css">
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" />
+  <head>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-  <script>
-    // Parse stored user safely and redirect if not a student
-    const _stored = localStorage.getItem('loggedInUser');
-    let user = null;
-    try {
-      user = _stored ? JSON.parse(_stored) : null;
-    } catch (err) {
-      // corrupted stored data — remove and redirect to login
-      localStorage.removeItem('loggedInUser');
-      localStorage.removeItem('userRole');
-      window.location.href = 'login.html';
-    }
-    if (!user || user.role !== 'student') {
-      window.location.href = 'login.html';
-    }
-  </script>
 </head>
 <body class="dashboard-body">
-  <body class="dashboard-body">
 
+  <!-- Sidebar -->
   <aside class="sidebar">
     <h2>CBC Portal</h2>
     <ul>
       <li class="active"><a href="#">🏠 Dashboard</a></li>
       <li><a href="#">📈 My Performance</a></li>
-      <li><a href="#">📚 Study Materials</a></li>
-      <li><a href="#">🤖 AI Feedback</a></li>
+      <li><a href="studentstudymaterial.html">📚 Study Materials</a></li>
+      <li><a href="#aiFeedbackSection">🤖 AI Feedback</a></li>
     </ul>
     <button class="logout-btn" onclick="logout()">Logout</button>
   </aside>
 
+  <!-- Main Dashboard -->
   <main class="dashboard-main">
     <header class="dashboard-header">
-      <h2 id="welcomeMessage">Welcome, <span id="studentName"></span></h2>
+      <h2 id="welcomeMessage">Welcome, Student</h2>
     </header>
 
     <section class="marks-section">
       <h2>Your Recent Performance</h2>
-      <p>📊 Personalized insights and AI feedback will appear here.</p>
+
+      <section id="studentSummary">
+        <p>Average: <span id="studentAvg">N/A</span></p>
+        <p>Class Rank: <span id="classRank">N/A</span></p>
+      </section>
+      <section class="performance-section">
+    <div class="filter-controls">
+        <select id="termFilter">
+            <option value="">All Terms</option>
+            <option value="T1-2025">Term 1 - 2025</option>
+            <option value="T2-2025">Term 2 - 2025</option>
+            <option value="T3-2025">Term 3 - 2025</option>
+        </select>
+        
+        <select id="gradeFilter">
+            <option value="">All Grades</option>
+            <option value="1">Grade 1</option>
+            <option value="2">Grade 2</option>
+            <option value="3">Grade 3</option>
+            <option value="4">Grade 4</option>
+            <option value="5">Grade 5</option>
+            <option value="6">Grade 6</option>
+            <option value="7">Grade 7</option>
+            <option value="8">Grade 8</option>
+            <option value="9">Grade 9</option>
+        </select>
+    </div>
+
+    <div class="charts-container">
+        <div class="chart-wrapper">
+            <canvas id="performanceChart"></canvas>
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="subjectChart"></canvas>
+        </div>
+       </div>
+       </section>
+      <section id="studentMarksSection">
+        <h3>Your Marks</h3>
+        <div id="studentMarks"></div>
+      </section>
+
+      <section id="aiFeedbackSection">
+        <h3>AI Feedback</h3>
+        <pre id="aiFeedback" style="white-space: pre-wrap;"></pre>
+      </section>
     </section>
   </main>
 
-
+  <!-- Scripts -->
+  <script src="student.js"></script>
   <script>
-    (function () {
-      const stored = localStorage.getItem('loggedInUser');
-      if (!stored) { window.location.href = 'login.html'; return; }
-      try {
-        const u = JSON.parse(stored);
-        if (!u || u.role !== 'student') {
-          window.location.href = 'login.html';
-          return;
-        }
-        document.getElementById('welcomeMessage').textContent = 'Welcome, ' + (u.firstname || 'Student');
-      } catch (e) {
-        localStorage.removeItem('loggedInUser');
-        localStorage.removeItem('userRole');
-        window.location.href = 'login.html';
-      }
-    })();
-
     function logout() {
       localStorage.removeItem('loggedInUser');
       localStorage.removeItem('userRole');
       window.location.href = 'login.html';
     }
   </script>
-
-  <script src="protect.js"></script>
+  <script src="studentperformance.js"></script>
 </body>
 </html>

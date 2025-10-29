@@ -1,0 +1,167 @@
+/* ============================
+   RESET & BASE STYLES
+============================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: #f8f9fc;
+  color: #333;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+}
+
+/* ============================
+   SECTION CONTAINER
+============================ */
+.study-materials {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  padding: 30px 40px;
+  width: 100%;
+  max-width: 1100px;
+  transition: all 0.3s ease;
+}
+
+.study-materials h2 {
+  text-align: center;
+  font-size: 2rem;
+  color: #222;
+  margin-bottom: 25px;
+  position: relative;
+}
+
+.study-materials h2::after {
+  content: "";
+  position: absolute;
+  width: 60px;
+  height: 3px;
+  background: #007bff;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 2px;
+}
+
+/* ============================
+   FILTER DROPDOWNS
+============================ */
+.materials-filter {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+}
+
+.materials-filter select {
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #f9f9f9;
+  color: #333;
+  font-size: 1rem;
+  outline: none;
+  transition: 0.3s ease;
+  min-width: 160px;
+}
+
+.materials-filter select:hover,
+.materials-filter select:focus {
+  border-color: #007bff;
+  background: #fff;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.2);
+}
+
+/* ============================
+   MATERIAL GRID
+============================ */
+.materials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 25px;
+  margin-top: 20px;
+}
+
+/* ============================
+   MATERIAL CARD
+============================ */
+.material-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.material-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.material-card h3 {
+  font-size: 1.2rem;
+  color: #222;
+  margin-bottom: 10px;
+}
+
+.material-card p {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.material-card a {
+  display: inline-block;
+  text-decoration: none;
+  background: #007bff;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  transition: background 0.3s ease;
+}
+
+.material-card a:hover {
+  background: #0056b3;
+}
+
+/* ============================
+   RESPONSIVE DESIGN
+============================ */
+@media (max-width: 768px) {
+  .study-materials {
+    padding: 25px 20px;
+  }
+
+  .study-materials h2 {
+    font-size: 1.6rem;
+  }
+
+  .materials-filter {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .materials-filter select {
+    width: 100%;
+  }
+}
+@media (max-width: 480px) {
+  .materials-grid {
+    grid-template-columns: 1fr;
+  }
+};

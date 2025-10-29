@@ -1,146 +1,257 @@
-// Dynamic subject loading based on selected grade
-const gradeSubjects = {
-    "1-3": [
-      "Literacy",
-      "Numeracy",
-      "Environmental Activities",
-      "Hygiene and Nutrition",
-      "Religious Activities",
-      "Movement and Creative Activities"
-    ],
-    "4-6": [
-      "Mathematics",
-      "English",
-      "Kiswahili",
-      "Science and Technology",
-      "Social Studies",
-      "Religious Education",
-      "Creative Arts",
-      "Physical and Health Education"
-    ],
-    "7-9": [
-      "Mathematics",
-      "English",
-      "Kiswahili",
-      "Integrated Science",
-      "Social Studies",
-      "Pre-Technical Studies",
-      "Agriculture",
-      "Business Studies",
-      "Religious Education",
-      "Sports and Physical Education",
-      "Visual Arts",
-      "Performing Arts"
-    ]
+document.addEventListener("DOMContentLoaded", function () {
+  // ==============================
+  // SUBJECTS BY GRADE RANGE
+  // ==============================
+  const gradeSubjects = {
+    "1-3": ["Literacy","Numeracy","Environmental Activities","Hygiene and Nutrition","Religious Activities","Movement and Creative Activities"],
+    "4-6": ["Mathematics","English","Kiswahili","Science and Technology","Social Studies","Religious Education","Creative Arts","Physical and Health Education"],
+    "7-9": ["Mathematics","English","Kiswahili","Integrated Science","Social Studies","Pre-Technical Studies","Agriculture","Business Studies","Religious Education","Sports and Physical Education","Visual Arts","Performing Arts"]
   };
 
-  const gradeSelect = document.getElementById("grade");
+  // ==============================
+  // ELEMENTS
+  // ==============================
+  const gradeRangeSelect = document.getElementById("gradeRange");
+  const actualGradeSelect = document.getElementById("actualGrade");
   const subjectSelect = document.getElementById("subject");
+  const marksList = document.getElementById("marksList");
+  const form = document.getElementById("marks-form");
+  const exportExcelBtn = document.getElementById("exportExcelBtn");
+  const exportPdfBtn = document.getElementById("exportPdfBtn");
 
-  gradeSelect.addEventListener("change", function () {
-    const selected = this.value;
-    subjectSelect.innerHTML = '<option value="">-- Select Subject --</option>'; // Reset
+  // ==============================
+  // AUTH CHECK
+  // ==============================
+  try {
+    const stored = localStorage.getItem("loggedInUser");
+    if (!stored) return (window.location.href = "login.html");
+    const user = JSON.parse(stored);
+    if (user.role !== "teacher") return (window.location.href = "login.html");
 
-    if (gradeSubjects[selected]) {
-      gradeSubjects[selected].forEach(subject => {
-        const option = document.createElement("option");
-        option.value = subject.toLowerCase().replace(/\s+/g, "-");
-        option.textContent = subject;
-        subjectSelect.appendChild(option);
-      });
-    }
+    document.getElementById("teacherName").textContent = user.firstname || "";
+    window.currentTeacher = user;
+  } catch (e) {
+    localStorage.removeItem("loggedInUser");
+    localStorage.removeItem("userRole");
+    window.location.href = "login.html";
+  }
+
+  // ==============================
+  // LOGOUT
+  // ==============================
+  window.logout = function () {
+    localStorage.removeItem("loggedInUser");
+    localStorage.removeItem("userRole");
+    window.location.href = "login.html";
+  };
+
+  // ==============================
+  // POPULATE GRADE RANGE → ACTUAL GRADE
+  // ==============================
+  gradeRangeSelect.addEventListener("change", function () {
+    const range = this.value;
+    actualGradeSelect.innerHTML = '<option value="">-- Select Grade --</option>';
+    subjectSelect.innerHTML = '<option value="">-- Select Subject --</option>';
+
+    let grades = [];
+    if (range === "1-3") grades = [1, 2, 3];
+    else if (range === "4-6") grades = [4, 5, 6];
+    else if (range === "7-9") grades = [7, 8, 9];
+
+    grades.forEach(g => {
+      const opt = document.createElement("option");
+      opt.value = g;
+      opt.textContent = `Grade ${g}`;
+      actualGradeSelect.appendChild(opt);
+    });
   });
 
-// Teacher authentication and name display
-  document.addEventListener("DOMContentLoaded", function () {
-      const stored = localStorage.getItem("loggedInUser");
-      if (!stored) {
-        window.location.href = "login.html";
-        return;
-      }
+  // ==============================
+  // POPULATE SUBJECTS WHEN RANGE SELECTED
+  // ==============================
+  actualGradeSelect.addEventListener("change", function () {
+    const range = gradeRangeSelect.value;
+    subjectSelect.innerHTML = '<option value="">-- Select Subject --</option>';
 
-      try {
-        const user = JSON.parse(stored);
-        if (!user || user.role !== "teacher") {
-          window.location.href = "login.html";
-          return;
-        }
-
-        // ✅ Set teacher name
-        const nameSpan = document.getElementById("teacherName");
-        if (nameSpan && user.firstname) {
-          nameSpan.textContent = user.firstname;
-        }
-      } catch (err) {
-        localStorage.removeItem("loggedInUser");
-        localStorage.removeItem("userRole");
-        window.location.href = "login.html";
-      }
+    const list = gradeSubjects[range] || [];
+    list.forEach(subject => {
+      const option = document.createElement("option");
+      option.value = subject.toLowerCase().replace(/\s+/g, "-");
+      option.textContent = subject;
+      subjectSelect.appendChild(option);
     });
+  });
 
-    function logout() {
-      localStorage.removeItem("loggedInUser");
-      localStorage.removeItem("userRole");
-      window.location.href = "login.html";
-    }
+  // ==============================
+  // LOAD MARKS
+  // ==============================
+  function loadMarks() {
+    const marks = JSON.parse(localStorage.getItem("submittedMarks") || "[]");
+    const teacherAdmission = window.currentTeacher?.admission;
+    marksList.innerHTML = "";
 
-// Marks submission logic.(This handles mark submission, computes levels (e.g. Excellent / Good / Fair), 
-// saves them in localStorage, and displays them immediately)
-  const form = document.getElementById("marks-form");
-  const marksList = document.getElementById("marksList");
+    marks
+      .filter(m => m.teacherAdmission === teacherAdmission)
+      .forEach((mark, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${mark.admissionNo}</td>
+          <td>${mark.actualGrade}</td>
+          <td>${(mark.subject || "").replace(/-/g, " ")}</td>
+          <td>${mark.score}</td>
+          <td>${mark.level}</td>
+          <td>
+            <button class="edit-btn" onclick="editMark(${index})">✏️</button>
+            <button class="delete-btn" onclick="deleteMark(${index})">🗑️</button>
+          </td>
+        `;
+        marksList.appendChild(row);
+      });
+  }
+  loadMarks();
 
-  // Load saved marks when page opens
-  document.addEventListener("DOMContentLoaded", loadMarks);
+  // ==============================
+  // ADD / EDIT MARKS
+  // ==============================
+  let editingIndex = null;
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
 
     const admissionNo = document.getElementById("admissionNo").value.trim();
-    const grade = document.getElementById("grade").value;
-    const subject = document.getElementById("subject").value;
-    const strand = document.getElementById("strand").value.trim();
+    const gradeRange = gradeRangeSelect.value;
+    const actualGrade = actualGradeSelect.value;
+    const subject = subjectSelect.value;
     const score = parseFloat(document.getElementById("score").value);
 
-    if (!admissionNo || !grade || !subject || !strand || isNaN(score)) {
-      alert("Please fill in all fields correctly.");
+    if (!admissionNo || !gradeRange || !actualGrade || !subject || isNaN(score)) {
+      alert("Please fill all fields correctly.");
       return;
     }
 
-    // Determine level
     let level = "";
     if (score >= 80) level = "Excellent";
     else if (score >= 65) level = "Good";
     else if (score >= 50) level = "Fair";
     else level = "Needs Improvement";
 
-    // Save to localStorage
-    const newMark = { admissionNo, grade, subject, strand, score, level };
-    const saved = JSON.parse(localStorage.getItem("submittedMarks") || "[]");
-    saved.push(newMark);
-    localStorage.setItem("submittedMarks", JSON.stringify(saved));
+    const teacherAdmission = window.currentTeacher?.admission || "";
+    const newMark = {
+      admissionNo,
+      gradeRange,
+      actualGrade,
+      subject,
+      score,
+      level,
+      teacherAdmission,
+    };
 
-    // Update table
-    appendRow(newMark);
+    let marks = JSON.parse(localStorage.getItem("submittedMarks") || "[]");
 
-    // Reset form
+    if (editingIndex !== null) {
+      marks[editingIndex] = newMark;
+      editingIndex = null;
+    } else {
+      marks.push(newMark);
+    }
+
+    localStorage.setItem("submittedMarks", JSON.stringify(marks));
     form.reset();
-    document.getElementById("subject").innerHTML = '<option value="">-- Select Subject --</option>';
+    subjectSelect.innerHTML = '<option value="">-- Select Subject --</option>';
+    loadMarks();
   });
 
-  function appendRow(mark) {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${mark.admissionNo}</td>
-      <td>${mark.grade}</td>
-      <td>${mark.subject.replace(/-/g, ' ')}</td>
-      <td>${mark.strand}</td>
-      <td>${mark.score}</td>
-      <td>${mark.level}</td>
-    `;
-    marksList.appendChild(row);
-  }
+  // ==============================
+  // EDIT MARK
+  // ==============================
+  window.editMark = function (index) {
+    const marks = JSON.parse(localStorage.getItem("submittedMarks") || "[]");
+    const mark = marks[index];
+    if (!mark) return;
 
-  function loadMarks() {
-    const saved = JSON.parse(localStorage.getItem("submittedMarks") || "[]");
-    saved.forEach(appendRow);
-  }
+    document.getElementById("admissionNo").value = mark.admissionNo;
+    gradeRangeSelect.value = mark.gradeRange;
+
+    const event = new Event("change");
+    gradeRangeSelect.dispatchEvent(event);
+
+    setTimeout(() => {
+      actualGradeSelect.value = mark.actualGrade;
+      actualGradeSelect.dispatchEvent(event);
+      setTimeout(() => {
+        subjectSelect.value = mark.subject;
+      }, 50);
+    }, 50);
+
+    document.getElementById("score").value = mark.score;
+    editingIndex = index;
+  };
+
+  // ==============================
+  // DELETE MARK
+  // ==============================
+  window.deleteMark = function (index) {
+    if (!confirm("Delete this record?")) return;
+    let marks = JSON.parse(localStorage.getItem("submittedMarks") || "[]");
+    marks.splice(index, 1);
+    localStorage.setItem("submittedMarks", JSON.stringify(marks));
+    loadMarks();
+  };
+
+  // ==============================
+  // EXPORT EXCEL
+  // ==============================
+  exportExcelBtn.addEventListener("click", function () {
+    const marks = JSON.parse(localStorage.getItem("submittedMarks") || "[]");
+    const teacherAdmission = window.currentTeacher?.admission;
+    const filtered = marks.filter(m => m.teacherAdmission === teacherAdmission);
+    if (!filtered.length) return alert("No marks to export.");
+
+    const header = ["Admission No", "Grade", "Subject", "Score", "Level"];
+    const aoa = [header];
+    filtered.forEach(m => {
+      aoa.push([
+        m.admissionNo,
+        m.actualGrade,
+        (m.subject || "").replace(/-/g, " "),
+        m.score,
+        m.level
+      ]);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Marks");
+    XLSX.writeFile(wb, `marks_${teacherAdmission}.xlsx`);
+  });
+
+  // ==============================
+  // EXPORT PDF
+  // ==============================
+  exportPdfBtn.addEventListener("click", function () {
+    const marks = JSON.parse(localStorage.getItem("submittedMarks") || "[]");
+    const teacherAdmission = window.currentTeacher?.admission;
+    const filtered = marks.filter(m => m.teacherAdmission === teacherAdmission);
+    if (!filtered.length) return alert("No marks to export.");
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const headers = [["Admission No", "Grade", "Subject", "Score", "Level"]];
+    const rows = filtered.map(m => [
+      m.admissionNo,
+      m.actualGrade,
+      (m.subject || "").replace(/-/g, " "),
+      m.score,
+      m.level
+    ]);
+
+    doc.autoTable({
+      head: headers,
+      body: rows,
+      startY: 20,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [41, 128, 185] }
+    });
+    doc.save(`marks_${teacherAdmission}.pdf`);
+  });
+});
