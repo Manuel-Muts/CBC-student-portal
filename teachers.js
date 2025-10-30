@@ -3,9 +3,9 @@ document.addEventListener("DOMContentLoaded", function () {
   // SUBJECTS BY GRADE RANGE
   // ==============================
   const gradeSubjects = {
-    "1-3": ["Literacy", "Numeracy", "Environmental Activities", "Hygiene and Nutrition", "Religious Activities", "Movement and Creative Activities"],
-    "4-6": ["Mathematics", "English", "Kiswahili", "Science and Technology", "Social Studies", "Religious Education", "Creative Arts", "Physical and Health Education"],
-    "7-9": ["Mathematics", "English", "Kiswahili", "Integrated Science", "Social Studies", "Pre-Technical Studies", "Agriculture", "Business Studies", "Religious Education", "Sports and Physical Education", "Visual Arts", "Performing Arts"]
+    "1-3": ["Mathematics", "Kiswahili", "English", "Environmental Activities", "Social Studies", "Religious Studies(CRE)", "Creative Arts and Sports"],
+    "4-6": ["Mathematics", "English", "Kiswahili", "Integrated Science", "Social Studies", "Religious Education(CRE)", "Creative Arts and Sports"],
+    "7-9": ["Mathematics", "English", "Kiswahili", "Integrated Science", "Social Studies", "Pre-Technical Studies", "Agriculture", "Religious Studies(CRE)", "Creative Arts and Sports"]
   };
 
   // ==============================
@@ -49,7 +49,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // ==============================
   // POPULATE GRADE RANGE → ACTUAL GRADE
   // ==============================
-  gradeRangeSelect.addEventListener("change", function () {
+  gradeRangeSelect?.addEventListener("change", function () {
     const range = this.value;
     actualGradeSelect.innerHTML = '<option value="">-- Select Grade --</option>';
     subjectSelect.innerHTML = '<option value="">-- Select Subject --</option>';
@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // ==============================
   // POPULATE SUBJECTS WHEN GRADE SELECTED
   // ==============================
-  actualGradeSelect.addEventListener("change", function () {
+  actualGradeSelect?.addEventListener("change", function () {
     const range = gradeRangeSelect.value;
     subjectSelect.innerHTML = '<option value="">-- Select Subject --</option>';
     (gradeSubjects[range] || []).forEach(sub => {
@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // ADD / EDIT MARKS
   // ==============================
   let editingIndex = null;
-  form.addEventListener("submit", function (e) {
+  form?.addEventListener("submit", function (e) {
     e.preventDefault();
 
     const admissionNo = admissionInput.value.trim();
@@ -220,9 +220,9 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   // ==============================
-  // EXPORT EXCEL
+  // EXPORT EXCEL / PDF
   // ==============================
-  exportExcelBtn.addEventListener("click", function () {
+  exportExcelBtn?.addEventListener("click", function () {
     const marks = JSON.parse(localStorage.getItem("submittedMarks") || "[]");
     const teacherAdmission = window.currentTeacher?.admission;
     const filtered = marks.filter(m => m.teacherAdmission === teacherAdmission);
@@ -247,10 +247,7 @@ document.addEventListener("DOMContentLoaded", function () {
     XLSX.writeFile(wb, `marks_${teacherAdmission}.xlsx`);
   });
 
-  // ==============================
-  // EXPORT PDF
-  // ==============================
-  exportPdfBtn.addEventListener("click", function () {
+  exportPdfBtn?.addEventListener("click", function () {
     const marks = JSON.parse(localStorage.getItem("submittedMarks") || "[]");
     const teacherAdmission = window.currentTeacher?.admission;
     const filtered = marks.filter(m => m.teacherAdmission === teacherAdmission);
@@ -277,4 +274,88 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     doc.save(`marks_${teacherAdmission}.pdf`);
   });
+
+  // ==============================
+  // STUDY MATERIALS SECTION
+  // ==============================
+  const materialsForm = document.getElementById("materials-form");
+  const materialGradeSelect = document.getElementById("materialGrade");
+  const materialSubjectSelect = document.getElementById("materialSubject");
+  const materialsList = document.getElementById("materialsList");
+
+  materialGradeSelect?.addEventListener("change", function () {
+    if (!materialSubjectSelect) return;
+    const grade = parseInt(this.value);
+    materialSubjectSelect.innerHTML = '<option value="">-- Select Subject --</option>';
+
+    let range = "";
+    if ([1, 2, 3].includes(grade)) range = "1-3";
+    else if ([4, 5, 6].includes(grade)) range = "4-6";
+    else if ([7, 8, 9].includes(grade)) range = "7-9";
+
+    if (range && gradeSubjects[range]) {
+      gradeSubjects[range].forEach(subject => {
+        const opt = document.createElement("option");
+        opt.value = subject.toLowerCase().replace(/\s+/g, "-");
+        opt.textContent = subject;
+        materialSubjectSelect.appendChild(opt);
+      });
+    }
+  });
+
+  materialsForm?.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const material = {
+      grade: materialGradeSelect.value,
+      subject: materialSubjectSelect.value,
+      title: document.getElementById("materialTitle").value.trim(),
+      description: document.getElementById("materialDescription").value.trim(),
+      link: document.getElementById("materialLink").value.trim(),
+      teacherId: window.currentTeacher?.admission,
+      dateAdded: new Date().toISOString()
+    };
+
+    if (!material.grade || !material.subject || !material.title || !material.link)
+      return alert("Please fill in all required fields.");
+
+    let materials = JSON.parse(localStorage.getItem("studyMaterials") || "[]");
+    materials.push(material);
+    localStorage.setItem("studyMaterials", JSON.stringify(materials));
+
+    this.reset();
+    materialSubjectSelect.innerHTML = '<option value="">-- Select Subject --</option>';
+    loadMaterials();
+  });
+
+  function loadMaterials() {
+    if (!materialsList) return;
+    const materials = JSON.parse(localStorage.getItem("studyMaterials") || "[]");
+    const teacherId = window.currentTeacher?.admission;
+    materialsList.innerHTML = "";
+
+    materials
+      .filter(m => m.teacherId === teacherId)
+      .forEach((material, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>Grade ${material.grade}</td>
+          <td>${material.subject.replace(/-/g, " ")}</td>
+          <td>${material.title}</td>
+          <td>${material.description}</td>
+          <td><a href="${material.link}" target="_blank">View</a></td>
+          <td><button onclick="deleteMaterial(${index})">🗑️</button></td>`;
+        materialsList.appendChild(row);
+      });
+  }
+
+  window.deleteMaterial = function (index) {
+    if (!confirm("Delete this material?")) return;
+    let materials = JSON.parse(localStorage.getItem("studyMaterials") || "[]");
+    materials.splice(index, 1);
+    localStorage.setItem("studyMaterials", JSON.stringify(materials));
+    loadMaterials();
+  };
+
+  loadMaterials();
 });

@@ -219,3 +219,56 @@ form {
 .delete-btn:hover {
   background: #b83232;
 }
+
+.materials-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin: 2rem 0;
+}
+
+.materials-section form {
+  max-width: 600px;
+  margin-bottom: 2rem;
+}
+
+.materials-section .form-group {
+  margin-bottom: 1rem;
+}
+
+.materials-section label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.materials-section select,
+.materials-section input,
+.materials-section textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.materials-section textarea {
+  height: 100px;
+  resize: vertical;
+}
+
+.materials-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.materials-list th,
+.materials-list td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.materials-list th {
+  background: #f8f9fa;
+  font-weight: 600;
+}
