@@ -22,14 +22,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- CBC Level Mapping ---
   function getCBCLevel(score) {
-    if (score >= 90) return "EE1";
-    if (score >= 75) return "EE2";
-    if (score >= 58) return "ME1";
-    if (score >= 41) return "ME2";
-    if (score >= 31) return "AE1";
-    if (score >= 21) return "AE2";
-    if (score >= 11) return "BE1";
-    return "BE2";
+    if (score >= 80) return "EE";
+    if (score >= 60) return "ME";
+    if (score >= 40) return "AE";
+    return "BE";
   }
 
   // --- UI Targets ---
@@ -127,9 +123,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (avgScore >= 80)
       feedback += "Excellent overall performance. Keep consolidating strengths.\n";
-    else if (avgScore >= 65)
+    else if (avgScore >= 60)
       feedback += "Good performance. Focus on consistency to reach excellence.\n";
-    else if (avgScore >= 50)
+    else if (avgScore >= 40)
       feedback += "Fair performance. Work on weaker topics and practice more.\n";
     else
       feedback += "Needs improvement. Consider extra practice and ask your teacher for guidance.\n";

@@ -65,6 +65,45 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// --- Validation Function, Id enforcement ---
+
+function validateSignup(data) {
+  const { role, admission } = data;
+  
+  const formats = {
+    student: /^[A-Z0-9]+$/i,
+    teacher: /^T[A-Z0-9]+$/i,
+    classteacher: /^CT[A-Z0-9]+$/i,
+    admin: /^ADMIN[A-Z0-9]+$/i
+  };
+
+  if (!formats[role].test(admission)) {
+    alert(`Invalid ID format for ${role}. ID must start with:
+      - Students: Regular admission number
+      - Teachers: T followed by numbers
+      - Class Teachers: CT followed by numbers
+      - Admin: ADMIN followed by numbers`);
+    return false;
+  }
+
+  return true;
+}
+
+// Add validation call in your signup form handler
+form.addEventListener("submit", function(e) {
+  e.preventDefault();
+  
+  const data = {
+    role: document.getElementById("role").value,
+    firstname: document.getElementById("firstname").value.trim(),
+    // ...other fields...
+    admission: document.getElementById("admission").value.trim()
+  };
+
+  if (!validateSignup(data)) return;
+
+});
+
 
 
 

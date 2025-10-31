@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Allocations</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <h2>Teacher Allocations</h2>
+<header>
+    <div class="toolbar">
+        <button id="logoutBtn" class="danger">Logout</button>
+    </div>
+</header>
+  <!-- SUBJECT ALLOCATION -->
+  <div class="allocation-section">
+    <h3>Allocate Subjects to Teacher</h3>
+    <form id="subjectAllocForm">
+      <label for="teacherSelect">Select Teacher:</label>
+      <select id="teacherSelect" required>
+        <option value="">-- Select Teacher --</option>
+      </select>
+
+      <label for="gradeRange">Select Grade Range:</label>
+      <select id="gradeRange" required>
+        <option value="">-- Select Range --</option>
+        <option value="1-3">Grades 1-3</option>
+        <option value="4-6">Grades 4-6</option>
+        <option value="7-9">Grades 7-9</option>
+      </select>
+
+      <label for="gradesSelect">Select Specific Grades:</label>
+      <select id="gradesSelect" multiple required></select>
+
+      <label for="subjectsSelect">Select Subjects:</label>
+      <select id="subjectsSelect" multiple required></select>
+
+      <button type="submit">Save Allocation</button>
+    </form>
+
+    <table id="subjectAllocTable">
+      <thead>
+        <tr>
+          <th>Teacher</th>
+          <th>Grade Range</th>
+          <th>Grades</th>
+          <th>Subjects</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <!-- CLASS TEACHER ALLOCATION -->
+  <div class="allocation-section">
+    <h3>Assign Class Teacher</h3>
+    <form id="classAllocForm">
+      <label for="classTeacherSelect">Select Teacher:</label>
+      <select id="classTeacherSelect" required>
+        <option value="">-- Select Teacher --</option>
+      </select>
+
+      <label for="classGradeSelect">Assign to Grade:</label>
+      <select id="classGradeSelect" required>
+        <option value="">-- Select Grade --</option>
+        <option value="1">Grade 1</option>
+        <option value="2">Grade 2</option>
+        <option value="3">Grade 3</option>
+        <option value="4">Grade 4</option>
+        <option value="5">Grade 5</option>
+        <option value="6">Grade 6</option>
+        <option value="7">Grade 7</option>
+        <option value="8">Grade 8</option>
+        <option value="9">Grade 9</option>
+      </select>
+
+      <button type="submit">Save Class Teacher</button>
+    </form>
+
+    <table id="classAllocTable">
+      <thead>
+        <tr>
+          <th>Teacher</th>
+          <th>Grade</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

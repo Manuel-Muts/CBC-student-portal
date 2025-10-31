@@ -1,18 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
-  const form = document.getElementById("loginForm");
-  if (!form) return;
-
-  // Populate role select if it exists
-  const roleSelect = document.getElementById("role");
-  if (roleSelect) {
-    roleSelect.innerHTML = `
-      <option value="">-- Select Role --</option>
-      <option value="student">Student</option>
-      <option value="teacher">Teacher</option>
-      <option value="classteacher">Class Teacher</option>
-      <option value="admin">Admin</option>
-    `;
-  }
+  // ...existing code for form and role select...
 
   form.addEventListener("submit", function(e) {
     e.preventDefault();
@@ -26,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function() {
       return;
     }
 
-    // Validate ID format based on role
+    // Validate ID format
     const validFormat = {
       student: /^[A-Z0-9]+$/i,
       teacher: /^T[A-Z0-9]+$/i,
@@ -40,10 +27,11 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     try {
-      // Get registered users
+      // Find user in registered list - MODIFIED THIS SECTION
       const users = JSON.parse(localStorage.getItem("registeredUsers") || "[]");
+      console.log("Searching for user:", { role, firstname, admission }); // Debug
       
-      // Find user (check admission and name only)
+      // Modified user lookup to not check role initially
       const user = users.find(u => 
         u.admission.toLowerCase() === admission.toLowerCase() &&
         u.firstname.toLowerCase() === firstname.toLowerCase()
@@ -54,28 +42,32 @@ document.addEventListener("DOMContentLoaded", function() {
         return;
       }
 
-      // Create enhanced user object with role flags
+      // Build enhanced user object with role override
       const userWithFlags = {
         ...user,
-        role: role,
-        isClassTeacher: role === 'classteacher',
-        isTeacher: role === 'teacher' || role === 'classteacher',
-        isAdmin: role === 'admin'
+        role: role, // Override with selected role
+        isTeacher: role === "teacher",
+        isClassTeacher: role === "classteacher",
+        isAdmin: role === "admin"
       };
 
-      // Store session data
+      // Debug log
+      console.log("Login successful:", userWithFlags);
+
+      // Save to localStorage
       localStorage.setItem("loggedInUser", JSON.stringify(userWithFlags));
       localStorage.setItem("userRole", role);
 
-      // Redirect based on role
-      const redirects = {
-        student: "student-dashboard.html",
-        teacher: "teacher-dashboard.html",
-        classteacher: "analysis.html",
-        admin: "admin.html"
-      };
-
-      window.location.href = redirects[role];
+      // Redirect with delay to ensure storage is saved
+      const redirect = redirectPaths[role];
+      if (redirect) {
+        setTimeout(() => {
+          console.log("Redirecting to:", redirect);
+          window.location.href = redirect;
+        }, 500); // Increased delay to 0.5 seconds
+      } else {
+        alert("Invalid role configuration");
+      }
 
     } catch (error) {
       console.error("Login error:", error);

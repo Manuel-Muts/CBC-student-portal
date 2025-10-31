@@ -155,10 +155,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // LEVEL
     let level = "";
-    if (score >= 80) level = "Excellent";
-    else if (score >= 65) level = "Good";
-    else if (score >= 50) level = "Fair";
-    else level = "Needs Improvement";
+    if (score >= 80) level = "EE";
+    else if (score >= 60) level = "ME";
+    else if (score >= 40) level = "AE";
+    else level = "BE";
 
     const teacherAdmission = window.currentTeacher?.admission || "";
     const newMark = {
@@ -358,4 +358,73 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
   loadMaterials();
+});
+
+// ============================
+// TEACHER MARK ENTRY SYSTEM
+// ============================
+
+// Simulate logged-in teacher (for now)
+const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser")) || { name: "Mr. Kamau" };
+
+// You can replace this with dropdowns if you already have them
+const selectedClass = "Grade 6";
+const selectedSubject = "Mathematics";
+
+// Where marks will be stored before submitting
+let collectedMarks = [];
+
+// Add marks (example for one student input)
+document.getElementById("addMarkBtn").addEventListener("click", () => {
+  const name = document.getElementById("studentName").value;
+  const score = parseInt(document.getElementById("studentScore").value);
+
+  if (!name || isNaN(score)) {
+    alert("Please fill both student name and score");
+    return;
+  }
+
+  // Create an ID automatically
+  const studentId = "ST" + (collectedMarks.length + 1).toString().padStart(3, "0");
+  collectedMarks.push({ studentId, name, score });
+
+  // Clear inputs
+  document.getElementById("studentName").value = "";
+  document.getElementById("studentScore").value = "";
+
+  alert("Added " + name + " - " + score);
+});
+
+// Submit all marks
+document.getElementById("submitBtn").addEventListener("click", () => {
+  if (collectedMarks.length === 0) {
+    alert("No marks added yet!");
+    return;
+  }
+
+  // Get saved marks if any
+  let submittedMarks = JSON.parse(localStorage.getItem("submittedMarks")) || [];
+
+  // Check if same class + subject already exists
+  const existingIndex = submittedMarks.findIndex(
+    entry => entry.class === selectedClass && entry.subject === selectedSubject
+  );
+
+  if (existingIndex !== -1) {
+    // Update old entry
+    submittedMarks[existingIndex].marks = collectedMarks;
+  } else {
+    // Add new entry
+    submittedMarks.push({
+      class: selectedClass,
+      subject: selectedSubject,
+      teacher: loggedInUser.name,
+      marks: collectedMarks
+    });
+  }
+
+  // Save to localStorage
+  localStorage.setItem("submittedMarks", JSON.stringify(submittedMarks));
+
+  alert("Marks submitted successfully!");
 });
