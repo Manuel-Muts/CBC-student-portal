@@ -1,0 +1,115 @@
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f9f9f9;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+.report-container {
+  width: 90%;
+  max-width: 900px;
+  margin: 30px auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+.report-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+.school-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+}
+
+.school-info h1 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.student-info, .marks-section, .remarks-section, .signatures {
+  margin-top: 20px;
+}
+
+.student-info p {
+  margin: 5px 0;
+}
+
+.marks-section table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.marks-section th, .marks-section td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.marks-section th {
+  background: #f4f4f4;
+}
+
+.summary {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.remarks-section h2 {
+  margin-bottom: 8px;
+}
+
+.signatures {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.signature-line {
+  text-align: center;
+}
+
+.date-line {
+  text-align: right;
+  margin-top: 10px;
+}
+
+.print-btn {
+  display: block;
+  margin: 40px auto 10px;
+  padding: 10px 20px;
+  background: #2980b9;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.print-btn:hover {
+  background: #2471a3;
+}
+
+/* 🖨️ Print Styling */
+@media print {
+  .print-btn {
+    display: none;
+  }
+  body {
+    background: #fff;
+  }
+  .report-container {
+    box-shadow: none;
+    border: none;
+  }
+}

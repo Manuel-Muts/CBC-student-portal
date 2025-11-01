@@ -1,133 +1,328 @@
-/* Existing code */
+/* ==== GLOBAL STYLES ==== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-/* Student Dashboard Sections */
-.dashboard-main {
-  padding: 2rem;
-  margin-left: 250px; /* Adjust based on sidebar width */
-}
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f4f6f8;
+      color: #2c3e50;
+      display: flex;
+      min-height: 100vh;
+    }
 
-#studentSummary {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
-  background: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
 
-#studentSummary p {
+    /* ==== SIDEBAR ==== */
+    .sidebar {
+      width: 230px;
+      background: #1e3a8a;
+      color: #fff;
+      padding: 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      z-index: 10;
+    }
+
+    .sidebar h2 {
+      font-size: 1.4rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .sidebar li a {
+      display: block;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+
+    .sidebar li.active a,
+    .sidebar li a:hover {
+      background: #3b82f6;
+    }
+
+    /* ==== MAIN DASHBOARD ==== */
+    .dashboard-main {
+      margin-left: 230px;
+      flex: 1;
+      padding: 1.5rem 2rem;
+    }
+
+    /* ==== HEADER ==== */
+.dashboard-header {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 1.1rem;
-}
-
-#studentSummary span {
-  font-weight: bold;
-  color: #2980b9;
-}
-
-#studentMarksSection, #aiFeedbackSection {
+  justify-content: space-between;
+  gap: 1rem;
   background: #fff;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  margin-bottom: 2rem;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  margin-bottom: 1.5rem;
+  /* allow children to shrink so welcome text won't overflow */
+  min-width: 0;
 }
 
-#studentMarksSection h3, #aiFeedbackSection h3 {
-  color: #2c3e50;
-  margin-bottom: 1rem;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 0.5rem;
-}
-
-#studentMarks table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-#studentMarks th, #studentMarks td {
-  padding: 0.75rem;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
-
-#studentMarks th {
-  background-color: #f8f9fa;
+.welcome-banner {
+  flex: 1;                 /* take available space */
+  min-width: 0;           /* allow truncation inside flex */
+  padding: 0.6rem 1rem;   /* visible padding */
+  background: #f0f7ff;
+  border-left: 4px solid #2563eb;
+  border-radius: 6px;
   font-weight: 600;
-  color: #2c3e50;
+  font-size: 1.05rem;
+  color: #102a43;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis; /* show ellipsis if too long */
+  white-space: nowrap;     /* keep single line; remove if you want wrap */
 }
 
-#studentMarks tr:hover {
-  background-color: #f8f9fa;
+.toolbar {
+  display: flex;
+  gap: 0.5rem;
+  flex: 0 0 auto; /* keep toolbar width based on content */
 }
 
-#aiFeedback {
-  background: #f8f9fa;
-  padding: 1rem;
-  border-radius: 4px;
-  border-left: 4px solid #2980b9;
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: #2c3e50;
+/* mobile: allow welcome to wrap under toolbar for small screens */
+@media (max-width: 720px) {
+  .dashboard-header { flex-direction: column; align-items: stretch; }
+  .welcome-banner { white-space: normal; }
+  .toolbar { justify-content: flex-end; }
 }
 
-/* Student Performance Section, with charts(filters) */
-.performance-section {
-    background: #fff;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin: 2rem 0;
-}
+    .btn.small { font-size: 0.85rem; padding: 6px 10px; }
+    .btn.danger { background: #e74c3c; color: #fff; }
+    .btn.danger:hover { background: #c0392b; }
+    .btn.primary { background: #2563eb; color: #fff; }
+    .btn.primary:hover { background: #1d4ed8; }
 
-.filter-controls {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.filter-controls select {
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    min-width: 150px;
-}
-
-.charts-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-}
-
-.chart-wrapper {
-    background: #f8f9fa;
-    padding: 1rem;
-    border-radius: 8px;
-    min-height: 300px;
-}
-
-@media (max-width: 768px) {
-    .charts-container {
-        grid-template-columns: 1fr;
+    /* ==== CONTENT SECTIONS ==== */
+    section {
+      background: #fff;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
+
+    h3 {
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 0.4rem;
+      color: #1e293b;
+    }
+
+    /* ==== SCHOOL HEADER ==== */
+    .school-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 1rem;
+      border-bottom: 3px solid #2563eb;
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .school-logo {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
+    }
+
+    /* ==== DETAILS GRID ==== */
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    /* ==== TABLE ==== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      background: #f1f5f9;
+      color: #1e293b;
+      font-weight: 600;
+    }
+
+    tr:hover {
+      background: #f9fafb;
+    }
+
+    /* ==== SUMMARY ==== */
+    #studentSummary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    #studentSummary p {
+      background: #f8fafc;
+      padding: 0.8rem;
+      border-radius: 6px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    #studentSummary span {
+      color: #2563eb;
+      font-weight: 700;
+    }
+
+    /* ==== SIGNATURES ==== */
+    .signatures {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .signatures div {
+      text-align: center;
+      flex: 1;
+      min-width: 150px;
+    }
+
+    /* ==== REPORT ACTIONS ==== */
+    .report-actions {
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    /* ==== RESPONSIVE ==== */
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .sidebar {
+        position: relative;
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+        padding: 0.5rem;
+      }
+      .dashboard-main {
+        margin-left: 0;
+        padding: 1rem;
+      }
+      .dashboard-header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+
+    /* ==== PRINT ==== */
+    @media print {
+      .sidebar, .report-actions, .dashboard-header {
+        display: none !important;
+      }
+      body {
+        background: #fff;
+      }
+      .dashboard-main {
+        margin: 0;
+        padding: 1rem;
+      }
+    }
+
+    /* Add / replace these rules (btn base + ensure header visible) */
+
+/* base button */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid transparent;
+  background: #2563eb;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background .15s ease, transform .06s ease;
+  white-space: nowrap;
 }
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .dashboard-main {
-    margin-left: 0;
-    padding: 1rem;
-  }
 
-  #studentSummary {
-    grid-template-columns: 1fr;
-  }
+/* small variant */
+.btn.small { font-size: 0.85rem; padding: 6px 10px; border-radius: 6px; }
 
-  #studentMarks {
-    overflow-x: auto;
-  }
+/* modifiers */
+.btn.primary { background: #2563eb; color: #fff; border-color: rgba(37,99,235,0.12); }
+.btn.primary:hover { background: #1d4ed8; }
+
+.btn.danger { background: #e74c3c; color: #fff; border-color: rgba(231,76,60,0.12); }
+.btn.danger:hover { background: #c0392b; }
+
+/* ensure header stands out and buttons visible */
+.dashboard-header {
+  position: relative;
+  z-index: 2;            /* above sidebar (sidebar z-index:10 is fixed; but header inside main should be fine) */
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  margin-bottom: 1.5rem;
+  min-width: 0;
+  overflow: visible;
+}
+
+/* make sure toolbar is visible and not collapsed */
+.toolbar { display: flex; gap: 0.5rem; align-items: center; }
+
+/* ensure welcome padding is visible */
+.welcome-banner {
+  flex: 1;
+  min-width: 0;
+  padding: 0.6rem 1rem;
+  background: #f0f7ff;
+  border-left: 4px solid #2563eb;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 1.02rem;
+  color: #102a43;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* small screen adjustments */
+@media (max-width: 720px) {
+  .dashboard-header { flex-direction: column; align-items: stretch; }
+  .welcome-banner { white-space: normal; }
+  .toolbar { justify-content: flex-end; }
 }

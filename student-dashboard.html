@@ -7,13 +7,10 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="student.css">
   <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" />
-  <head>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-</head>
-<body class="dashboard-body">
+<body>
 
-  <!-- Sidebar -->
+  <!-- SIDEBAR -->
   <aside class="sidebar">
     <h2>CBC Portal</h2>
     <ul>
@@ -22,75 +19,86 @@
       <li><a href="studentstudymaterial.html">📚 Study Materials</a></li>
       <li><a href="#aiFeedbackSection">🤖 AI Feedback</a></li>
     </ul>
-    <button class="logout-btn" onclick="logout()">Logout</button>
   </aside>
 
-  <!-- Main Dashboard -->
+  <!-- MAIN DASHBOARD -->
   <main class="dashboard-main">
+
     <header class="dashboard-header">
-      <h2 id="welcomeMessage">Welcome, Student</h2>
+      <div class="welcome-banner">Welcome, <span id="welcomeName">Student</span></div>
+      <div class="toolbar">
+        <button id="refreshBtn" class="btn small primary">Refresh</button>
+        <button id="logoutBtn" class="btn small danger">Logout</button>
+      </div>
     </header>
 
-    <section class="marks-section">
-      <h2>Your Recent Performance</h2>
+    <section id="cbcReportForm">
+      <div class="school-header">
+        <img src="school-logo.png" alt="School Logo" class="school-logo" />
+        <div class="school-info">
+          <h2>School Name Here</h2>
+          <p>Motto: <em>Learning for Excellence</em></p>
+          <p>End of Term Report Form</p>
+        </div>
+      </div>
+
+      <div class="details-grid">
+        <p><strong>Full Name:</strong> <span id="studentName"></span></p>
+        <p><strong>Admission No:</strong> <span id="studentAdm"></span></p>
+        <p><strong>Grade/Class:</strong> <span id="studentGrade"></span></p>
+        <p><strong>Term/Year:</strong> <span id="studentTerm"></span></p>
+        <p><strong>Class Teacher:</strong> <span id="classTeacher"></span></p>
+        <p><strong>Date:</strong> <span id="reportDate"></span></p>
+      </div>
+
+      <section id="studentMarksSection">
+        <h3>Performance by Subject</h3>
+        <div id="studentMarks">Loading...</div>
+      </section>
 
       <section id="studentSummary">
-        <p>Average: <span id="studentAvg">N/A</span></p>
+        <p>Average Score: <span id="studentAvg">N/A</span>%</p>
+        <p>Overall Level: <span id="studentLevel">N/A</span></p>
         <p>Class Rank: <span id="classRank">N/A</span></p>
       </section>
-      <section class="performance-section">
-    <div class="filter-controls">
-        <select id="termFilter">
-            <option value="">All Terms</option>
-            <option value="T1-2025">Term 1 - 2025</option>
-            <option value="T2-2025">Term 2 - 2025</option>
-            <option value="T3-2025">Term 3 - 2025</option>
-        </select>
-        
-        <select id="gradeFilter">
-            <option value="">All Grades</option>
-            <option value="1">Grade 1</option>
-            <option value="2">Grade 2</option>
-            <option value="3">Grade 3</option>
-            <option value="4">Grade 4</option>
-            <option value="5">Grade 5</option>
-            <option value="6">Grade 6</option>
-            <option value="7">Grade 7</option>
-            <option value="8">Grade 8</option>
-            <option value="9">Grade 9</option>
-        </select>
-    </div>
 
-    <div class="charts-container">
-        <div class="chart-wrapper">
-            <canvas id="performanceChart"></canvas>
+      <section id="strengthWeakness" class="analysis-section">
+        <h3>Highlights</h3>
+        <p><strong>Top Strengths:</strong> <span id="topStrengths">Loading...</span></p>
+        <p><strong>Areas to Improve:</strong> <span id="areasImprove">Loading...</span></p>
+      </section>
+
+      <section id="remarksSection">
+        <h3>Teacher & Headteacher Remarks</h3>
+        <p><strong>Class Teacher’s Remarks:</strong> <span id="teacherRemarks">Great progress this term!</span></p>
+        <p><strong>Headteacher’s Remarks:</strong> <span id="headRemarks">Keep up the good work.</span></p>
+
+        <div class="signatures">
+          <div>
+            <p>_________________________</p>
+            <p>Class Teacher</p>
+          </div>
+          <div>
+            <p>_________________________</p>
+            <p>Headteacher</p>
+          </div>
         </div>
-        <div class="chart-wrapper">
-            <canvas id="subjectChart"></canvas>
-        </div>
-       </div>
-       </section>
-      <section id="studentMarksSection">
-        <h3>Your Marks</h3>
-        <div id="studentMarks"></div>
       </section>
 
       <section id="aiFeedbackSection">
-        <h3>AI Feedback</h3>
-        <pre id="aiFeedback" style="white-space: pre-wrap;"></pre>
+        <h3>AI Feedback Summary</h3>
+        <pre id="aiFeedback" style="white-space: pre-wrap;">Loading feedback...</pre>
       </section>
+
+      <div class="report-actions">
+        <button class="btn primary" onclick="window.location.href='report.html'">View Report Form</button>
+      </div>
     </section>
   </main>
 
-  <!-- Scripts -->
-  <script src="student.js"></script>
-  <script>
-    function logout() {
-      localStorage.removeItem('loggedInUser');
-      localStorage.removeItem('userRole');
-      window.location.href = 'login.html';
-    }
-  </script>
+<!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="studentperformance.js"></script>
+  <script src="student.js"></script>
 </body>
 </html>
