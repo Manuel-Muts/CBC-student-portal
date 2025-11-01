@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return "BE";
   }
 
-  // --- UI Targets ---
+  // --- UI Elements ---
   const welcomeEl = document.getElementById("welcomeMessage");
   const marksContainer = document.getElementById("studentMarks");
   const rankEl = document.getElementById("classRank");
@@ -37,58 +37,73 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (welcomeEl) welcomeEl.textContent = `Welcome, ${user.firstname || "Student"}`;
 
-  // --- Load Marks ---
+  // --- Load Data ---
   const marks = JSON.parse(localStorage.getItem("submittedMarks") || "[]");
   const studentMarks = marks.filter(m => m.admissionNo === user.admission);
 
-  // --- Display Marks ---
-  if (marksContainer) {
+  // --- Term/Year Filter Elements ---
+  const termSelect = document.getElementById("termFilter");
+  const yearSelect = document.getElementById("yearFilter");
+  const applyBtn = document.getElementById("applyFilter");
+
+  // --- RENDER MARKS ---
+  function renderStudentMarks(term = "all", year = "all") {
+    if (!marksContainer) return;
     marksContainer.innerHTML = "";
-    if (!studentMarks.length) {
-      marksContainer.textContent = "No marks yet.";
-    } else {
-      const table = document.createElement("table");
-      table.innerHTML = `
-        <thead>
-          <tr>
-            <th>Term</th>
-            <th>Grade</th>
-            <th>Subject</th>
-            <th>Score</th>
-            <th>CBC Level</th>
-          </tr>
-        </thead>
-      `;
-      const tbody = document.createElement("tbody");
 
-      studentMarks.forEach(m => {
-        const level = getCBCLevel(Number(m.score));
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${m.term || ""}</td>
-          <td>${m.grade || ""}</td>
-          <td>${(m.subject || "").replace(/-/g, " ")}</td>
-          <td>${m.score}</td>
-          <td>${level}</td>
-        `;
-        tbody.appendChild(tr);
-      });
+    let filtered = [...studentMarks];
+    if (term !== "all") filtered = filtered.filter(m => m.term === term);
+    if (year !== "all") filtered = filtered.filter(m => m.year === year);
 
-      table.appendChild(tbody);
-      marksContainer.appendChild(table);
+    if (!filtered.length) {
+      marksContainer.textContent = "No marks found for the selected filters.";
+      if (avgEl) avgEl.textContent = "N/A";
+      if (rankEl) rankEl.textContent = "N/A";
+      if (feedbackEl) feedbackEl.textContent = "No marks to generate feedback.";
+      return;
     }
-  }
 
-  // --- Compute Average ---
-  const avg = studentMarks.length
-    ? studentMarks.reduce((s, m) => s + Number(m.score || 0), 0) / studentMarks.length
-    : 0;
-  if (avgEl) avgEl.textContent = avg ? avg.toFixed(2) : "N/A";
+    // Table Display
+    const table = document.createElement("table");
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Term</th>
+          <th>Year</th>
+          <th>Grade</th>
+          <th>Subject</th>
+          <th>Score</th>
+          <th>CBC Level</th>
+        </tr>
+      </thead>
+    `;
+    const tbody = document.createElement("tbody");
 
-  // --- Compute Class Rank ---
-  if (studentMarks.length) {
-    const latestTerm = studentMarks[studentMarks.length - 1].term;
-    const latestGrade = studentMarks[studentMarks.length - 1].grade;
+    filtered.forEach(m => {
+      const level = getCBCLevel(Number(m.score));
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${m.term || ""}</td>
+        <td>${m.year || ""}</td>
+        <td>${m.grade || ""}</td>
+        <td>${(m.subject || "").replace(/-/g, " ")}</td>
+        <td>${m.score}</td>
+        <td>${level}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    table.appendChild(tbody);
+    marksContainer.appendChild(table);
+
+    // --- Compute Average ---
+    const avg =
+      filtered.reduce((s, m) => s + Number(m.score || 0), 0) / filtered.length;
+    if (avgEl) avgEl.textContent = avg.toFixed(2);
+
+    // --- Compute Class Rank ---
+    const latestTerm = filtered[filtered.length - 1].term;
+    const latestGrade = filtered[filtered.length - 1].grade;
 
     const students = {};
     marks
@@ -101,23 +116,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const averages = Object.keys(students).map(adm => ({
       adm,
-      avg: students[adm].total / students[adm].count
+      avg: students[adm].total / students[adm].count,
     }));
 
     averages.sort((a, b) => b.avg - a.avg);
     const pos = averages.findIndex(a => a.adm === user.admission);
     const rankText = pos >= 0 ? `${pos + 1} / ${averages.length}` : "N/A";
     if (rankEl) rankEl.textContent = rankText;
-  } else {
-    if (rankEl) rankEl.textContent = "N/A";
+
+    // --- Generate Feedback ---
+    if (feedbackEl) feedbackEl.textContent = generateFeedback(filtered);
   }
 
   // --- AI Feedback Generator ---
   function generateFeedback(marksList) {
-    if (!marksList || !marksList.length)
-      return "No marks yet to generate feedback.";
+    if (!marksList.length) return "No marks yet to generate feedback.";
 
-    const avgScore = marksList.reduce((s, m) => s + Number(m.score || 0), 0) / marksList.length;
+    const avgScore =
+      marksList.reduce((s, m) => s + Number(m.score || 0), 0) / marksList.length;
     const level = getCBCLevel(avgScore);
     let feedback = `CBC Level: ${level}\n`;
 
@@ -128,9 +144,8 @@ document.addEventListener("DOMContentLoaded", () => {
     else if (avgScore >= 40)
       feedback += "Fair performance. Work on weaker topics and practice more.\n";
     else
-      feedback += "Needs improvement. Consider extra practice and ask your teacher for guidance.\n";
+      feedback += "Needs improvement. Consider extra practice and ask your teacher for help.\n";
 
-    // Identify weakest subjects
     const bySubject = {};
     marksList.forEach(m => {
       const s = m.subject || "unknown";
@@ -141,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const subAvgs = Object.keys(bySubject).map(s => ({
       subject: s.replace(/-/g, " "),
-      avg: bySubject[s].total / bySubject[s].count
+      avg: bySubject[s].total / bySubject[s].count,
     }));
 
     subAvgs.sort((a, b) => a.avg - b.avg);
@@ -155,13 +170,17 @@ document.addEventListener("DOMContentLoaded", () => {
     return feedback;
   }
 
-  if (feedbackEl) feedbackEl.textContent = generateFeedback(studentMarks);
-});
+  // --- Filter Button Event ---
+  applyBtn?.addEventListener("click", () => {
+    const selectedTerm = termSelect.value;
+    const selectedYear = yearSelect.value;
+    renderStudentMarks(selectedTerm, selectedYear);
+  });
 
-// ================================
-// ADDITIONAL REPORT & CHART LOGIC
-// ================================
-document.addEventListener("DOMContentLoaded", () => {
+  // Initial render
+  renderStudentMarks();
+
+  // --- REPORT & CHART LOGIC ---
   const nameEl = document.getElementById("studentName");
   const admEl = document.getElementById("studentAdm");
   const gradeEl = document.getElementById("studentGrade");
@@ -177,7 +196,7 @@ document.addEventListener("DOMContentLoaded", () => {
     admEl.textContent = user.admission;
     gradeEl.textContent = studentMarks.length ? studentMarks[0].grade : "N/A";
     termEl.textContent = studentMarks.length ? studentMarks[0].term : "N/A";
-    teacherEl.textContent = "Mr. John Doe"; // you can make dynamic later
+    teacherEl.textContent = "Mr. John Doe"; // optional: make dynamic later
     dateEl.textContent = new Date().toLocaleDateString();
   }
 
@@ -197,12 +216,23 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   const subjectAverages = Object.keys(bySubject).map(s => ({
     subject: s.replace(/-/g, " "),
-    avg: bySubject[s].total / bySubject[s].count
+    avg: bySubject[s].total / bySubject[s].count,
   }));
   subjectAverages.sort((a, b) => b.avg - a.avg);
 
-  strengthsEl.textContent = subjectAverages.slice(0, 3).map(s => `${s.subject} (${s.avg.toFixed(0)}%)`).join(", ") || "N/A";
-  improveEl.textContent = subjectAverages.slice(-3).map(s => `${s.subject} (${s.avg.toFixed(0)}%)`).join(", ") || "N/A";
+  if (strengthsEl)
+    strengthsEl.textContent =
+      subjectAverages
+        .slice(0, 3)
+        .map(s => `${s.subject} (${s.avg.toFixed(0)}%)`)
+        .join(", ") || "N/A";
+
+  if (improveEl)
+    improveEl.textContent =
+      subjectAverages
+        .slice(-3)
+        .map(s => `${s.subject} (${s.avg.toFixed(0)}%)`)
+        .join(", ") || "N/A";
 
   // ============ CHARTS ============
   const ctx1 = document.getElementById("subjectChart");
@@ -213,21 +243,22 @@ document.addEventListener("DOMContentLoaded", () => {
       type: "bar",
       data: {
         labels: subjectAverages.map(s => s.subject),
-        datasets: [{
-          label: "Subject Scores",
-          data: subjectAverages.map(s => s.avg),
-          borderWidth: 1
-        }]
+        datasets: [
+          {
+            label: "Subject Scores",
+            data: subjectAverages.map(s => s.avg),
+            borderWidth: 1,
+          },
+        ],
       },
       options: {
         scales: { y: { beginAtZero: true, max: 100 } },
-        plugins: { legend: { display: false } }
-      }
+        plugins: { legend: { display: false } },
+      },
     });
   }
 
   if (ctx2) {
-    // Term trend (simple average per term)
     const byTerm = {};
     studentMarks.forEach(m => {
       byTerm[m.term] = byTerm[m.term] || { total: 0, count: 0 };
@@ -236,73 +267,47 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     const termData = Object.keys(byTerm).map(t => ({
       term: t,
-      avg: byTerm[t].total / byTerm[t].count
+      avg: byTerm[t].total / byTerm[t].count,
     }));
 
     new Chart(ctx2, {
       type: "line",
       data: {
         labels: termData.map(d => d.term),
-        datasets: [{
-          label: "Average per Term",
-          data: termData.map(d => d.avg),
-          fill: false,
-          tension: 0.3,
-          borderWidth: 2
-        }]
+        datasets: [
+          {
+            label: "Average per Term",
+            data: termData.map(d => d.avg),
+            fill: false,
+            tension: 0.3,
+            borderWidth: 2,
+          },
+        ],
       },
       options: {
-        scales: { y: { beginAtZero: true, max: 100 } }
-      }
+        scales: { y: { beginAtZero: true, max: 100 } },
+      },
     });
   }
-});
-//welcome message script
-(function() {
-  const stored = localStorage.getItem('loggedInUser');
-  const welcomeEl = document.getElementById('welcomeName');
-  if (!welcomeEl) return;
 
-  try {
-    const user = stored ? JSON.parse(stored) : null;
-    if (user) {
-      // prefer firstname, fallback to fullname or email
-      welcomeEl.textContent = user.firstname || user.fullname || user.email || 'Student';
-    } else {
-      welcomeEl.textContent = 'Guest';
-    }
-  } catch (err) {
-    console.error('Welcome message error:', err);
-    welcomeEl.textContent = 'Student';
+  // --- Welcome Message (Header) ---
+  const welcomeName = document.getElementById("welcomeName");
+  if (welcomeName) {
+    welcomeName.textContent =
+      user.firstname || user.fullname || user.email || "Student";
   }
-})();
 
-  // Logout button (attach after DOM ready)
-  document.getElementById('logoutBtn')?.addEventListener('click', () => {
-    localStorage.removeItem('loggedInUser');
-    localStorage.removeItem('userRole');
-    window.location.href = 'index.html';
+  // --- Logout Button ---
+  document.getElementById("logoutBtn")?.addEventListener("click", () => {
+    localStorage.removeItem("loggedInUser");
+    localStorage.removeItem("userRole");
+    window.location.href = "index.html";
   });
 
-// Ensure the header refresh button works — add this at end of file
-document.addEventListener("DOMContentLoaded", () => {
+  // --- Refresh Button ---
   const refreshBtn = document.getElementById("refreshBtn");
-  if (!refreshBtn) return;
-
-  // Prevent accidental form submit (if inside a form)
-  refreshBtn.setAttribute("type", "button");
-
-  refreshBtn.addEventListener("click", () => {
-    // Prefer internal refresh functions if present
-    if (typeof refreshStudentDashboard === "function") {
-      refreshStudentDashboard();
-      return;
-    }
-    if (typeof loadStudentData === "function") {
-      loadStudentData();
-      return;
-    }
-    // Fallback: reload the page to re-run scripts and UI rendering
-    window.location.reload();
-  });
+  if (refreshBtn) {
+    refreshBtn.setAttribute("type", "button");
+    refreshBtn.addEventListener("click", () => window.location.reload());
+  }
 });

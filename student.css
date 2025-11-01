@@ -326,3 +326,26 @@
   .welcome-banner { white-space: normal; }
   .toolbar { justify-content: flex-end; }
 }
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-bar label {
+  font-weight: 600;
+}
+
+.filter-bar select {
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+}
+
+.filter-bar .btn {
+  padding: 0.4rem 0.8rem;
+}

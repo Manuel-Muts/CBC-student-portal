@@ -1,6 +1,6 @@
-/* ============================
+/* ------------------------------
    RESET & BASE STYLES
-============================ */
+------------------------------ */
 * {
   margin: 0;
   padding: 0;
@@ -9,24 +9,23 @@
 }
 
 body {
-  background: #f8f9fc;
+  background: #f5f7fa;
   color: #333;
   line-height: 1.6;
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
   padding: 40px 20px;
 }
 
-/* ============================
-   SECTION CONTAINER
-============================ */
+/* ------------------------------
+   MAIN CONTAINER
+------------------------------ */
 .study-materials {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  padding: 30px 40px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 35px 40px;
   width: 100%;
   max-width: 1100px;
   transition: all 0.3s ease;
@@ -35,7 +34,7 @@ body {
 .study-materials h2 {
   text-align: center;
   font-size: 2rem;
-  color: #222;
+  color: #111;
   margin-bottom: 25px;
   position: relative;
 }
@@ -43,7 +42,7 @@ body {
 .study-materials h2::after {
   content: "";
   position: absolute;
-  width: 60px;
+  width: 70px;
   height: 3px;
   background: #007bff;
   bottom: -8px;
@@ -52,49 +51,45 @@ body {
   border-radius: 2px;
 }
 
-/* ============================
-   FILTER DROPDOWNS
-============================ */
+/* ------------------------------
+   FILTERS
+------------------------------ */
 .materials-filter {
   display: flex;
   justify-content: center;
-  gap: 20px;
   flex-wrap: wrap;
+  gap: 15px;
   margin-bottom: 30px;
 }
 
 .materials-filter select {
   padding: 10px 14px;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   border-radius: 8px;
   background: #f9f9f9;
   color: #333;
   font-size: 1rem;
   outline: none;
-  transition: 0.3s ease;
   min-width: 160px;
+  transition: 0.3s ease;
 }
 
-.materials-filter select:hover,
-.materials-filter select:focus {
+.materials-filter select:focus,
+.materials-filter select:hover {
   border-color: #007bff;
   background: #fff;
-  box-shadow: 0 0 6px rgba(0, 123, 255, 0.2);
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
 }
 
-/* ============================
-   MATERIAL GRID
-============================ */
+/* ------------------------------
+   MATERIAL CARDS
+------------------------------ */
 .materials-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
   gap: 25px;
-  margin-top: 20px;
 }
 
-/* ============================
-   MATERIAL CARD
-============================ */
 .material-card {
   background: #fff;
   border-radius: 12px;
@@ -102,66 +97,63 @@ body {
   padding: 20px;
   text-align: center;
   transition: all 0.3s ease;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05);
 }
 
 .material-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
 }
 
 .material-card h3 {
-  font-size: 1.2rem;
-  color: #222;
+  font-size: 1.1rem;
   margin-bottom: 10px;
+  color: #222;
 }
 
 .material-card p {
-  font-size: 0.95rem;
   color: #555;
-  margin-bottom: 15px;
-}
-
-.material-card a {
-  display: inline-block;
-  text-decoration: none;
-  background: #007bff;
-  color: #fff;
-  padding: 8px 14px;
-  border-radius: 8px;
   font-size: 0.9rem;
-  transition: background 0.3s ease;
 }
 
-.material-card a:hover {
-  background: #0056b3;
+/* ------------------------------
+   ACTION BUTTONS
+------------------------------ */
+.material-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
 }
 
-/* ============================
+.material-actions .btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  font-size: 0.9rem;
+  color: #fff;
+  transition: 0.3s ease;
+}
+
+.btn.view { background: #2563eb; }
+.btn.download { background: #059669; }
+.btn.print { background: #7c3aed; }
+
+.btn:hover { opacity: 0.9; }
+
+/* ------------------------------
    RESPONSIVE DESIGN
-============================ */
+------------------------------ */
 @media (max-width: 768px) {
-  .study-materials {
-    padding: 25px 20px;
-  }
-
-  .study-materials h2 {
-    font-size: 1.6rem;
-  }
-
-  .materials-filter {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
-
-  .materials-filter select {
-    width: 100%;
-  }
+  .study-materials { padding: 25px 20px; }
 }
+
 @media (max-width: 480px) {
-  .materials-grid {
-    grid-template-columns: 1fr;
-  }
-};
+  .materials-grid { grid-template-columns: 1fr; }
+}
+
+/* Hide buttons when printing */
+@media print {
+  .materials-filter, .material-actions { display: none; }
+}

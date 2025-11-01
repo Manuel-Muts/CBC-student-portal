@@ -51,10 +51,32 @@
         <p><strong>Date:</strong> <span id="reportDate"></span></p>
       </div>
 
-      <section id="studentMarksSection">
-        <h3>Performance by Subject</h3>
-        <div id="studentMarks">Loading...</div>
-      </section>
+
+  <div class="filter-bar">
+    <label>
+      Term:
+      <select id="termFilter">
+        <option value="all">All</option>
+        <option value="Term 1">Term 1</option>
+        <option value="Term 2">Term 2</option>
+        <option value="Term 3">Term 3</option>
+      </select>
+    </label>
+
+    <label>
+      Year:
+      <select id="yearFilter">
+        <option value="all">All</option>
+        <option value="2024">2024</option>
+        <option value="2025">2025</option>
+      </select>
+    </label>
+
+    <button id="applyFilter" class="btn small primary">Apply</button>
+  </div>
+
+  <div id="studentMarks">Loading...</div>
+</section>
 
       <section id="studentSummary">
         <p>Average Score: <span id="studentAvg">N/A</span>%</p>
