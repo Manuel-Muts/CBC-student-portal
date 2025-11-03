@@ -51,4 +51,22 @@ body {
       color: white;
     }
 
-    
+    .refresh-btn {
+  background: #2d89ef;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s ease;
+}
+
+.refresh-btn:hover {
+  background: #1b5fa7;
+}
+
+.refresh-btn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}

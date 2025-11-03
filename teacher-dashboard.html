@@ -15,16 +15,15 @@
 <body>
   <header>
     <h1>Welcome, <span id="teacherName"></span></h1>
-    <button onclick="logout()">Logout</button>
+    <button id="logoutBtn">Logout</button>
   </header>
 
   <main>
-    <!-- =============== MARKS ENTRY =============== -->
+    <!-- =================== MARKS ENTRY =================== -->
     <section class="marks-section">
       <h2>Enter Student Marks</h2>
-
       <form id="marks-form">
-        <!-- Grade Range and Actual Grade -->
+        <!-- Grade Range -->
         <div class="form-group">
           <label>Grade Range</label>
           <select id="gradeRange" required>
@@ -35,6 +34,7 @@
           </select>
         </div>
 
+        <!-- Actual Grade -->
         <div class="form-group">
           <label>Actual Grade</label>
           <select id="actualGrade" required>
@@ -47,7 +47,6 @@
           <label>Student Admission No</label>
           <input type="text" id="admissionNo" placeholder="ADM001" required />
         </div>
-        <!-- NEW: auto-filled student name -->
         <div class="form-group">
           <label>Student Name</label>
           <input type="text" id="studentName" placeholder="Auto-filled" readonly />
@@ -67,43 +66,64 @@
           <input type="number" id="score" placeholder="78" min="0" max="100" required />
         </div>
 
+        <!-- Term -->
+        <div class="form-group">
+          <label>Term</label>
+          <select id="term" required>
+            <option value="">-- Select Term --</option>
+            <option value="Term 1">Term 1</option>
+            <option value="Term 2">Term 2</option>
+            <option value="Term 3">Term 3</option>
+          </select>
+        </div>
+
+        <!-- Year -->
+        <div class="form-group">
+          <label>Year</label>
+          <input type="number" id="year" value="2025" min="2020" max="2090" required />
+        </div>
+
+        <!-- Assessment -->
+        <div class="form-group">
+          <label>Assessment</label>
+          <select id="assessmentSelect" required></select>
+        </div>
+
         <button type="submit" class="btn">Submit Marks</button>
       </form>
     </section>
 
-    <!-- =============== SUBMITTED MARKS TABLE =============== -->
+    <!-- =================== SUBMITTED MARKS TABLE =================== -->
     <section class="marks-table">
       <h2>Submitted Marks</h2>
       <div class="export-btns">
         <button id="exportExcelBtn">📊 Export Excel</button>
         <button id="exportPdfBtn">📄 Export PDF</button>
       </div>
-
       <table>
         <thead>
           <tr>
             <th>Admission No</th>
-            <th>Student Name</th> 
+            <th>Student Name</th>
             <th>Grade</th>
             <th>Subject</th>
             <th>Score</th>
-            <th>Level</th>
+            <th>Term</th>
+            <th>Year</th>
+            <th>Assessment</th>
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody id="marksList">
-          <!-- Submitted marks appear here -->
-        </tbody>
+        <tbody id="marksList"></tbody>
       </table>
     </section>
-    <!-- Add this before the closing </main> tag -->
-    <!-- =============== STUDY MATERIALS SECTION =============== -->
+
+    <!-- =================== STUDY MATERIALS =================== -->
     <section class="materials-section">
       <h2>Upload Study Materials</h2>
-      
       <form id="materials-form">
         <div class="form-group">
-          <label for="materialGrade">Grade Level</label>
+          <label>Grade Level</label>
           <select id="materialGrade" required>
             <option value="">-- Select Grade --</option>
             <option value="1">Grade 1</option>
@@ -119,25 +139,25 @@
         </div>
 
         <div class="form-group">
-          <label for="materialSubject">Subject</label>
+          <label>Subject</label>
           <select id="materialSubject" required>
             <option value="">-- Select Subject --</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label for="materialTitle">Title</label>
-          <input type="text" id="materialTitle" required placeholder="e.g., Chapter 1 Notes">
+          <label>Title</label>
+          <input type="text" id="materialTitle" placeholder="Chapter 1 Notes" required />
         </div>
 
         <div class="form-group">
-          <label for="materialDescription">Description</label>
-          <textarea id="materialDescription" rows="3" required placeholder="Brief description of the material"></textarea>
+          <label>Description</label>
+          <textarea id="materialDescription" rows="3" placeholder="Brief description" required></textarea>
         </div>
 
         <div class="form-group">
-          <label for="materialLink">PDF/Word</label>
-          <input type="file" id="materialLink" accept=".pdf,.docx,.doc" required>
+          <label>PDF/Word</label>
+          <input type="file" id="materialLink" accept=".pdf,.doc,.docx" required />
         </div>
 
         <button type="submit" class="btn">Upload Material</button>
@@ -152,19 +172,16 @@
               <th>Subject</th>
               <th>Title</th>
               <th>Description</th>
-              <th>PDF/Word</th>
+              <th>File</th>
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody id="materialsList">
-            <!-- Materials list appears here -->
-          </tbody>
+          <tbody id="materialsList"></tbody>
         </table>
       </div>
     </section>
   </main>
 
-  <script src="protect.js"></script>
   <script src="teachers.js"></script>
 </body>
 </html>

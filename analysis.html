@@ -26,40 +26,50 @@
 
     <div id="analysisWrap" class="hidden">
       <div class="card">
-        <div class="analysis-controls">
-  <div class="control-block">
-    <label for="gradeFilter">Select Grade:</label>
-    <select id="gradeFilter" class="small">
-      <option value="">All Grades</option>
-      <option value="1">Grade 1</option>
-      <option value="2">Grade 2</option>
-      <option value="3">Grade 3</option>
-      <option value="4">Grade 4</option>
-      <option value="5">Grade 5</option>
-      <option value="6">Grade 6</option>
-      <option value="7">Grade 7</option>
-      <option value="8">Grade 8</option>
-      <option value="9">Grade 9</option>
-    </select>
+  <div class="analysis-controls">
 
-    <label for="termFilter">Select Term:</label>
-    <select id="termFilter" class="small">
-      <option value="">All Terms</option>
-      <option value="T1-2025">Term 1 - 2025</option>
-      <option value="T2-2025">Term 2 - 2025</option>
-      <option value="T3-2025">Term 3 - 2025</option>
-    </select>
+    <div class="control-block">
+      <label for="gradeFilter">Grade (Your Class):</label>
+      <select id="gradeFilter" class="small" disabled>
+        <option value="">Loading...</option>
+      </select>
 
+      <label for="termFilter">Select Term:</label>
+      <select id="termFilter" class="small">
+        <option value="">All Terms</option>
+        <option value="Term 1">Term 1</option>
+        <option value="Term 2">Term 2</option>
+        <option value="Term 3">Term 3</option>
+      </select>
+
+      <label for="yearFilter">Select Year:</label>
+      <input type="number" id="yearFilter" class="small" min="2025" max="2090" value="2025" />
+    </div>
+
+    <div class="control-block">
+      <button id="generateReport" class="btn small">Generate Report</button>
+    </div>
   </div>
 </div>
 
-          <div class="control-block">
+        <div class="control-block">
             <label>Analysis type</label>
             <select id="analysisType">
               <option value="overview">Overview (ranking + subject means)</option>
               <option value="detailed">Detailed (student subject breakdown)</option>
             </select>
           </div>
+          <label for="assessmentFilter">Assessment:</label>
+<select id="assessmentFilter">
+  <option value="all">All</option>
+  <option value="1">Assessment 1</option>
+  <option value="2">Assessment 2</option>
+  <option value="3">Assessment 3</option>
+  <option value="4">Assessment 4</option>
+  <option value="5">Assessment 5</option>
+</select>
+<button id="applyFiltersBtn">Select</button>
+
 
           <div class="control-block">
             <label>Include only subjects taught by me?</label>

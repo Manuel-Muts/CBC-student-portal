@@ -253,3 +253,27 @@ button:hover {
 .control-block button:hover {
   background: #2471a3;
 }
+
+/* Pulse animation for Refresh button */
+@keyframes pulse {
+  0% { transform: scale(1); background-color: #4CAF50; }
+  50% { transform: scale(1.05); background-color: #45a049; }
+  100% { transform: scale(1); background-color: #4CAF50; }
+}
+
+button.pulsing {
+  animation: pulse 0.5s ease-in-out infinite;
+  color: white;
+}
+
+/* Pulse animation for buttons */
+@keyframes pulse {
+  0% { transform: scale(1); background-color: #4CAF50; }
+  50% { transform: scale(1.05); background-color: #45a049; }
+  100% { transform: scale(1); background-color: #4CAF50; }
+}
+
+button.pulsing {
+  animation: pulse 0.5s ease-in-out;
+  color: white;
+}

@@ -38,19 +38,19 @@
         <div class="school-info">
           <h2>School Name Here</h2>
           <p>Motto: <em>Learning for Excellence</em></p>
-          <p>End of Term Report Form</p>
         </div>
       </div>
 
       <div class="details-grid">
-        <p><strong>Full Name:</strong> <span id="studentName"></span></p>
-        <p><strong>Admission No:</strong> <span id="studentAdm"></span></p>
-        <p><strong>Grade/Class:</strong> <span id="studentGrade"></span></p>
-        <p><strong>Term/Year:</strong> <span id="studentTerm"></span></p>
-        <p><strong>Class Teacher:</strong> <span id="classTeacher"></span></p>
-        <p><strong>Date:</strong> <span id="reportDate"></span></p>
-      </div>
-
+  <p><strong>Full Name:</strong> <span id="studentName">Loading...</span></p>
+  <p><strong>Admission No:</strong> <span id="studentAdm">Loading...</span></p>
+  <p><strong>Grade/Class:</strong> <span id="studentGrade">Loading...</span></p>
+  <p><strong>Term:</strong> <span id="studentTerm">Loading...</span></p>
+  <p><strong>Year:</strong> <span id="studentYear">Loading...</span></p>
+  <p><strong>Assessment:</strong> <span id="studentAssessment">Auto</span></p>
+  <p><strong>Class Teacher:</strong> <span id="classTeacher">Loading...</span></p>
+  <p><strong>Date:</strong> <span id="reportDate">Loading...</span></p>
+</div>
 
   <div class="filter-bar">
     <label>
@@ -73,6 +73,15 @@
     </label>
 
     <button id="applyFilter" class="btn small primary">Apply</button>
+    <select id="assessmentFilter">
+  <option value="all">All</option>
+  <option value="1">Assessment 1</option>
+  <option value="2">Assessment 2</option>
+  <option value="3">Assessment 3</option>
+  <option value="4">Assessment 4</option>
+  <option value="5">Assessment 5</option>
+</select>
+<button id="applyFiltersBtn">Select</button>
   </div>
 
   <div id="studentMarks">Loading...</div>
@@ -113,7 +122,8 @@
       </section>
 
       <div class="report-actions">
-        <button class="btn primary" onclick="window.location.href='report.html'">View Report Form</button>
+        <button class="btn primary" onclick="window.location.href='report.html'">View Report Form</button><button id="syncReportBtn">🔄 Sync Report Data</button>
+
       </div>
     </section>
   </main>

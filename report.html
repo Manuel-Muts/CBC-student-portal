@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student Report Form</title>
   <link rel="stylesheet" href="report.css">
+  <!-- Include html2pdf.js library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 
@@ -16,7 +18,6 @@
       <div class="school-info">
         <h1 id="schoolName">CBC Academy</h1>
         <p>P.O. Box 12345 – Nairobi</p>
-        <p>End of Term Report Form</p>
       </div>
     </header>
 
@@ -28,7 +29,7 @@
       <p><strong>Admission No:</strong> <span id="admissionNo">Loading...</span></p>
       <p><strong>Grade/Class:</strong> <span id="studentGrade">Loading...</span></p>
       <p><strong>Term:</strong> <span id="studentTerm">Loading...</span></p>
-      <p><strong>Year:</strong> <span id="studentYear">2025</span></p>
+      <p><strong>Year:</strong> <span id="studentYear">Loading...</span></p>
     </section>
 
     <!-- Marks Table -->
@@ -41,10 +42,12 @@
             <th>Marks</th>
             <th>CBC Level</th>
             <th>Remarks</th>
+            <th>Term</th>
+            <th>Year</th>
           </tr>
         </thead>
         <tbody>
-          <!-- JS inserts subjects here -->
+          <!-- JS inserts subjects dynamically -->
         </tbody>
       </table>
 
@@ -71,14 +74,24 @@
         <span>__________________________</span>
         <p>Head Teacher</p>
       </div>
-      <p class="date-line">Date: <span id="reportDate"></span></p>
+      <p class="date-line">Date: <span id="reportDate">Loading...</span></p>
     </section>
 
-    <!-- Print Button -->
-    <button class="print-btn" onclick="window.print()">🖨️ Print Report</button>
+      </div> <!-- End of report-container -->
 
+  <!-- BUTTONS OUTSIDE REPORT -->
+  <div class="report-controls">
+    <button id="refreshBtn" class="refresh-btn">🔄 Refresh</button>
+    <button id="printBtn" class="print-btn">🖨️ Print Report</button>
+    <button id="downloadBtn" class="download-btn">⬇️ Download PDF</button>
   </div>
 
+  <!-- SCRIPTS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+  integrity="sha512-G0n8P9i1YliD0rk0Ckz6zGL0bAInNvJqKD52r6bqS+oxluI8DZwxvLxktDP6H8fS1qRQj3KJROa5bbU5QnS8gg=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"></script>
   <script src="report.js"></script>
 </body>
 </html>
+

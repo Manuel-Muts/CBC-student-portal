@@ -12,6 +12,8 @@
     <div class="toolbar">
         <button id="logoutBtn" class="danger">Logout</button>
     </div>
+    <button id="refreshBtn" class="refresh-btn">🔄 Refresh Data</button>
+
 </header>
   <!-- SUBJECT ALLOCATION -->
   <div class="allocation-section">
@@ -90,6 +92,11 @@
       <tbody></tbody>
     </table>
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  emailjs.init("uwKzbZjRkDBV-Tarq"); // paste your public key here
+</script>
+
 
   <script src="admin.js"></script>
 </body>

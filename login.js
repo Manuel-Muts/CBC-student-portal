@@ -1,5 +1,13 @@
 document.addEventListener("DOMContentLoaded", function() {
-  // ...existing code for form and role select...
+  const form = document.getElementById("loginForm");
+  if (!form) return;
+
+  const redirectPaths = {
+    student: "student-dashboard.html",
+    teacher: "teacher-dashboard.html",
+    classteacher: "analysis.html",
+    admin: "admin.html"
+  };
 
   form.addEventListener("submit", function(e) {
     e.preventDefault();
@@ -27,14 +35,15 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     try {
-      // Find user in registered list - MODIFIED THIS SECTION
-      const users = JSON.parse(localStorage.getItem("registeredUsers") || "[]");
-      console.log("Searching for user:", { role, firstname, admission }); // Debug
-      
-      // Modified user lookup to not check role initially
-      const user = users.find(u => 
-        u.admission.toLowerCase() === admission.toLowerCase() &&
-        u.firstname.toLowerCase() === firstname.toLowerCase()
+      let users = JSON.parse(localStorage.getItem("registeredUsers") || "[]");
+      console.log("Searching for user:", { role, firstname, admission });
+
+      // ============================
+      // FIND USER (Teacher or ClassTeacher)
+      // ============================
+      let user = users.find(u =>
+        u.firstname.toLowerCase() === firstname.toLowerCase() &&
+        u.admission.toLowerCase() === admission.toLowerCase()
       );
 
       if (!user) {
@@ -42,31 +51,61 @@ document.addEventListener("DOMContentLoaded", function() {
         return;
       }
 
-      // Build enhanced user object with role override
+      // ============================
+      // ROLE VALIDATION LOGIC
+      // ============================
+      let effectiveRole = role;
+
+      if (role === "classteacher") {
+        // If they are trying to log in as class teacher
+        if (user.isClassTeacher && user.ct_password) {
+          effectiveRole = "classteacher";
+        } else {
+          alert("You are not assigned as a class teacher.");
+          return;
+        }
+      }
+
+      // ============================
+      // TEACHER DUAL LOGIN LOGIC
+      // ============================
+      // Allow teacher to log in with teacher ID or CT password
+      if (role === "teacher") {
+        // Normal teacher login (uses admission)
+        effectiveRole = "teacher";
+      } else if (role === "classteacher") {
+        // Class teacher login (requires CT password)
+        const enteredPass = prompt("Enter your Class Teacher password (starts with CT):");
+        if (enteredPass !== user.ct_password) {
+          alert("Incorrect Class Teacher password!");
+          return;
+        }
+      }
+
+      // ============================
+      // SAVE SESSION + REDIRECT
+      // ============================
       const userWithFlags = {
         ...user,
-        role: role, // Override with selected role
-        isTeacher: role === "teacher",
-        isClassTeacher: role === "classteacher",
-        isAdmin: role === "admin"
+        role: effectiveRole,
+        isTeacher: effectiveRole === "teacher",
+        isClassTeacher: effectiveRole === "classteacher",
+        isAdmin: effectiveRole === "admin"
       };
 
-      // Debug log
+      localStorage.setItem("loggedInUser", JSON.stringify(userWithFlags));
+      localStorage.setItem("userRole", effectiveRole);
+
       console.log("Login successful:", userWithFlags);
 
-      // Save to localStorage
-      localStorage.setItem("loggedInUser", JSON.stringify(userWithFlags));
-      localStorage.setItem("userRole", role);
-
-      // Redirect with delay to ensure storage is saved
-      const redirect = redirectPaths[role];
+      // Redirect to appropriate dashboard
+      const redirect = redirectPaths[effectiveRole];
       if (redirect) {
         setTimeout(() => {
-          console.log("Redirecting to:", redirect);
           window.location.href = redirect;
-        }, 500); // Increased delay to 0.5 seconds
+        }, 400);
       } else {
-        alert("Invalid role configuration");
+        alert("Invalid role configuration.");
       }
 
     } catch (error) {

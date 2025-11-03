@@ -6,16 +6,25 @@ body {
   padding: 0;
 }
 
+/* ------------------------------
+   Report Container
+------------------------------ */
 .report-container {
   width: 90%;
-  max-width: 900px;
+  max-width: 794px; /* A4 width at 96dpi */
   margin: 30px auto;
   background: #fff;
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
 }
 
+/* ------------------------------
+   Header Section
+------------------------------ */
 .report-header {
   display: flex;
   align-items: center;
@@ -33,83 +42,213 @@ body {
 .school-info h1 {
   margin: 0;
   color: #2c3e50;
+  font-size: 22px;
 }
 
-.student-info, .marks-section, .remarks-section, .signatures {
+.school-info h2 {
+  font-size: 14px;
+  font-weight: normal;
+  color: #555;
+  margin: 4px 0 15px;
+}
+
+/* ------------------------------
+   Student Info & Sections
+------------------------------ */
+.student-info,
+.marks-section,
+.remarks-section,
+.signatures {
   margin-top: 20px;
 }
 
 .student-info p {
   margin: 5px 0;
+  font-size: 14px;
 }
 
+/* ------------------------------
+   Marks Table
+------------------------------ */
 .marks-section table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+  font-size: 13px;
 }
 
-.marks-section th, .marks-section td {
+.marks-section th,
+.marks-section td {
   border: 1px solid #ccc;
   padding: 8px;
-  text-align: left;
+  text-align: center;
 }
 
 .marks-section th {
-  background: #f4f4f4;
+  background: #e9f0ff;
+  font-weight: 600;
 }
 
+/* ------------------------------
+   Summary Section
+------------------------------ */
 .summary {
   margin-top: 15px;
   display: flex;
   justify-content: space-between;
   font-weight: bold;
+  font-size: 14px;
 }
 
+/* ------------------------------
+   Remarks & Signatures
+------------------------------ */
 .remarks-section h2 {
   margin-bottom: 8px;
+}
+
+.remarks-section p {
+  margin: 5px 0;
+  font-size: 14px;
 }
 
 .signatures {
   display: flex;
   justify-content: space-between;
-  margin-top: 30px;
+  margin-top: 40px;
+  font-size: 14px;
 }
 
 .signature-line {
   text-align: center;
+  width: 45%;
+  border-top: 1px solid #333;
+  padding-top: 6px;
 }
 
 .date-line {
   text-align: right;
-  margin-top: 10px;
+  margin-top: 15px;
+  font-size: 13px;
 }
 
-.print-btn {
-  display: block;
-  margin: 40px auto 10px;
-  padding: 10px 20px;
-  background: #2980b9;
-  color: #fff;
+/* ------------------------------
+   Buttons
+------------------------------ */
+.print-btn,
+.refresh-btn {
+  display: inline-block;
+  background: #0066cc;
+  color: white;
   border: none;
+  padding: 10px 20px;
+  margin: 40px 10px 10px;
   border-radius: 5px;
   cursor: pointer;
+  transition: 0.2s;
+  font-size: 14px;
 }
 
 .print-btn:hover {
-  background: #2471a3;
+  background: #004c99;
 }
 
-/* 🖨️ Print Styling */
+.refresh-btn {
+  background: #888;
+}
+
+.refresh-btn:hover {
+  background: #666;
+}
+
+/* ------------------------------
+   Print Styles (Optimized A4)
+------------------------------ */
 @media print {
-  .print-btn {
-    display: none;
+  body, html {
+    width: 210mm;
+    height: 297mm;
+    margin: 0 auto;
+    padding: 0;
+    background: #fff !important;
   }
-  body {
-    background: #fff;
-  }
+
   .report-container {
+    width: 100%;
+    max-width: 190mm; /* fits safely inside A4 */
+    margin: 0 auto;
     box-shadow: none;
     border: none;
+    padding: 15mm;
+    page-break-inside: avoid;
+  }
+
+  .print-btn,
+  .refresh-btn {
+    display: none !important;
+  }
+
+  .marks-section table {
+    width: 100%;
+    border-collapse: collapse;
+    page-break-inside: avoid;
+  }
+
+  .marks-section th,
+  .marks-section td {
+    font-size: 12px;
+    padding: 5px;
+  }
+
+  .school-info h1 {
+    font-size: 20px;
+  }
+
+  .school-info h2 {
+    font-size: 13px;
+  }
+}
+
+/* =============================
+   REPORT CONTROLS (Outside Report)
+============================= */
+.report-controls {
+  text-align: center;
+  margin: 25px auto;
+}
+
+.report-controls button {
+  margin: 6px;
+  padding: 10px 20px;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Button styles */
+.refresh-btn {
+  background: #7f8c8d;
+  color: #fff;
+}
+.refresh-btn:hover { background: #636e72; }
+
+.print-btn {
+  background: #2980b9;
+  color: #fff;
+}
+.print-btn:hover { background: #2471a3; }
+
+.download-btn {
+  background: #27ae60;
+  color: #fff;
+}
+.download-btn:hover { background: #1e8449; }
+
+/* Hide buttons during printing */
+@media print {
+  .report-controls {
+    display: none !important;
   }
 }
