@@ -23,7 +23,6 @@
     <section class="marks-section">
       <h2>Enter Student Marks</h2>
       <form id="marks-form">
-        <!-- Grade Range -->
         <div class="form-group">
           <label>Grade Range</label>
           <select id="gradeRange" required>
@@ -34,7 +33,6 @@
           </select>
         </div>
 
-        <!-- Actual Grade -->
         <div class="form-group">
           <label>Actual Grade</label>
           <select id="actualGrade" required>
@@ -42,7 +40,6 @@
           </select>
         </div>
 
-        <!-- Student Info -->
         <div class="form-group">
           <label>Student Admission No</label>
           <input type="text" id="admissionNo" placeholder="ADM001" required />
@@ -52,7 +49,6 @@
           <input type="text" id="studentName" placeholder="Auto-filled" readonly />
         </div>
 
-        <!-- Subject -->
         <div class="form-group">
           <label>Subject</label>
           <select id="subject" required>
@@ -60,13 +56,11 @@
           </select>
         </div>
 
-        <!-- Score -->
         <div class="form-group">
           <label>Score (%)</label>
           <input type="number" id="score" placeholder="78" min="0" max="100" required />
         </div>
 
-        <!-- Term -->
         <div class="form-group">
           <label>Term</label>
           <select id="term" required>
@@ -77,13 +71,11 @@
           </select>
         </div>
 
-        <!-- Year -->
         <div class="form-group">
           <label>Year</label>
-          <input type="number" id="year" value="2025" min="2020" max="2090" required />
+          <input type="number" id="year" value="2025" min="2025" max="2090" required />
         </div>
 
-        <!-- Assessment -->
         <div class="form-group">
           <label>Assessment</label>
           <select id="assessmentSelect" required></select>
@@ -93,29 +85,10 @@
       </form>
     </section>
 
-    <!-- =================== SUBMITTED MARKS TABLE =================== -->
+    <!-- =================== SUBMITTED MARKS TABLES =================== -->
     <section class="marks-table">
       <h2>Submitted Marks</h2>
-      <div class="export-btns">
-        <button id="exportExcelBtn">📊 Export Excel</button>
-        <button id="exportPdfBtn">📄 Export PDF</button>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Admission No</th>
-            <th>Student Name</th>
-            <th>Grade</th>
-            <th>Subject</th>
-            <th>Score</th>
-            <th>Term</th>
-            <th>Year</th>
-            <th>Assessment</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="marksList"></tbody>
-      </table>
+      <div id="submittedMarksContainer"></div>
     </section>
 
     <!-- =================== STUDY MATERIALS =================== -->

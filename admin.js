@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   // ===============================
-  // SAVE CLASS TEACHER ALLOCATION + GENERATE PASSWORD + SEND EMAIL
+  // SAVE CLASS TEACHER ALLOCATION + SEND EMAIL
   // ===============================
   document.getElementById("classAllocForm").addEventListener("submit", function (e) {
     e.preventDefault();
@@ -89,62 +89,45 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let classAlloc = JSON.parse(localStorage.getItem("classTeacherAllocations") || "[]");
 
-    // Prevent duplicate allocation
     if (classAlloc.some(a => a.grade === grade)) {
       return alert("A class teacher is already assigned to this grade.");
     }
 
-    // ===============================
-    // GENERATE PASSWORD STARTING WITH CT
-    // ===============================
     const password = "CT" + Math.random().toString(36).substring(2, 8).toUpperCase();
 
-    // ===============================
-    // UPDATE USER RECORD IN registeredUsers
-    // ===============================
     let users = JSON.parse(localStorage.getItem("registeredUsers") || "[]");
     const teacherIndex = users.findIndex(u => u.admission === teacherAdmission);
 
-    if (teacherIndex !== -1) {
-      // Keep their main teacher role but add CT credentials
-      users[teacherIndex].role = "teacher"; // main role stays teacher
-      users[teacherIndex].ct_password = password; // special CT login password
-      users[teacherIndex].isClassTeacher = true;  // flag for dual role
-    } else {
-      return alert("Teacher not found in user records.");
-    }
+    if (teacherIndex === -1) return alert("Teacher not found in user records.");
 
+    users[teacherIndex].ct_password = password;
+    users[teacherIndex].isClassTeacher = true;
+    users[teacherIndex].classGrade = `Grade ${grade}`;
     localStorage.setItem("registeredUsers", JSON.stringify(users));
 
-    // ===============================
-    // SAVE CLASS TEACHER ALLOCATION
-    // ===============================
-    classAlloc.push({ teacherAdmission, grade });
+    classAlloc.push({ teacherAdmission, grade, classGrade: `Grade ${grade}` });
     localStorage.setItem("classTeacherAllocations", JSON.stringify(classAlloc));
 
-    // ===============================
-    // SEND EMAIL WITH LOGIN DETAILS
-    // ===============================
     const teacher = users[teacherIndex];
     sendEmailToTeacher(teacher.email, teacher.firstname, grade, password);
 
     this.reset();
     loadClassAllocations();
-    alert(`Class Teacher assigned successfully and credentials sent to ${teacher.email}`);
+    alert(`✅ Class Teacher assigned successfully and credentials sent to ${teacher.email}`);
   });
 
   // ===============================
-  // EMAIL SENDER (USING EmailJS)
+  // EMAIL SENDER
   // ===============================
   function sendEmailToTeacher(to_email, to_name, grade, password) {
-    const serviceID = "service_5b2j238";   // your EmailJS service ID
-    const templateID = "template_v936gzy"; // your EmailJS template ID
+    const serviceID = "service_5b2j238";
+    const templateID = "template_v936gzy";
 
     const params = {
-      to_email: to_email,
-      to_name: to_name,
-      grade: grade,
-      password: password
+      to_email,
+      to_name,
+      grade,
+      password
     };
 
     emailjs.send(serviceID, templateID, params)
@@ -156,7 +139,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ===============================
-  // DISPLAY SAVED ALLOCATIONS
+  // DISPLAY ALLOCATIONS
   // ===============================
   function loadSubjectAllocations() {
     const allocations = JSON.parse(localStorage.getItem("teacherSubjectAllocations") || "[]");
@@ -191,7 +174,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // ===============================
-  // DELETE FUNCTIONS
+  // DELETE ALLOCATIONS
   // ===============================
   window.deleteSubjectAlloc = function (index) {
     if (!confirm("Delete this allocation?")) return;
@@ -214,62 +197,31 @@ document.addEventListener("DOMContentLoaded", function () {
   loadClassAllocations();
 });
 
-document.addEventListener('DOMContentLoaded', function() {
-  // Protect admin route
+// ===============================
+// PROTECT ADMIN ROUTE + REFRESH BUTTON
+// ===============================
+document.addEventListener('DOMContentLoaded', function () {
   const user = JSON.parse(localStorage.getItem('loggedInUser') || '{}');
   if (!user || user.role !== 'admin') {
     window.location.href = 'login.html';
     return;
   }
 
-  // Add logout handler in the admin dashboard
-  document.getElementById('logoutBtn')?.addEventListener('click', function() {
+  document.getElementById('logoutBtn')?.addEventListener('click', function () {
     localStorage.removeItem('loggedInUser');
     localStorage.removeItem('userRole');
     window.location.href = 'login.html';
   });
-});
 
-// ===============================
-// REFRESH BUTTON FUNCTIONALITY
-// ===============================
-const refreshBtn = document.getElementById("refreshBtn");
-if (refreshBtn) {
-  refreshBtn.addEventListener("click", () => {
-    refreshBtn.disabled = true;
-    refreshBtn.textContent = "Refreshing...";
+  const refreshBtn = document.getElementById("refreshBtn");
+  if (refreshBtn) {
+    refreshBtn.addEventListener("click", () => {
+      refreshBtn.disabled = true;
+      refreshBtn.textContent = "Refreshing...";
 
-    // Reload all dropdowns and tables
-    teacherSelect.innerHTML = "";
-    classTeacherSelect.innerHTML = "";
-    subjectAllocTable.innerHTML = "";
-    classAllocTable.innerHTML = "";
-
-    // Re-fetch updated users and teachers
-    const users = JSON.parse(localStorage.getItem("registeredUsers") || "[]");
-    const teachers = users.filter(u => u.role === "teacher");
-
-    teachers.forEach(t => {
-      const opt1 = document.createElement("option");
-      const opt2 = document.createElement("option");
-      opt1.value = opt2.value = t.admission;
-      opt1.textContent = opt2.textContent = `${t.firstname} ${t.lastname || ""} (${t.admission})`;
-      teacherSelect.appendChild(opt1);
-      classTeacherSelect.appendChild(opt2);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     });
-
-    // Reload tables
-    loadSubjectAllocations();
-    loadClassAllocations();
-
-    // Animate button reset
-    setTimeout(() => {
-      refreshBtn.disabled = false;
-      refreshBtn.textContent = "🔄 Refresh Data";
-    }, 1000);
-  });
-}
-
-//Update the teachers and allocations on page load
-loadSubjectAllocations();
-loadClassAllocations();
+  }
+});

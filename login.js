@@ -1,6 +1,15 @@
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("loginForm");
   if (!form) return;
+
+  const admissionField = document.getElementById("admission");
+  const ctPasswordField = document.createElement("input");
+  ctPasswordField.type = "password";
+  ctPasswordField.id = "ctPassword";
+  ctPasswordField.placeholder = "Enter your Class Teacher password";
+  ctPasswordField.style.display = "none";
+  ctPasswordField.required = false;
+  form.insertBefore(ctPasswordField, form.querySelector("button"));
 
   const redirectPaths = {
     student: "student-dashboard.html",
@@ -9,41 +18,64 @@ document.addEventListener("DOMContentLoaded", function() {
     admin: "admin.html"
   };
 
-  form.addEventListener("submit", function(e) {
+  const roleSelect = document.getElementById("role");
+  roleSelect.addEventListener("change", () => {
+    const selected = roleSelect.value;
+    if (selected === "classteacher") {
+      admissionField.style.display = "none";
+      admissionField.required = false;
+      ctPasswordField.style.display = "block";
+      ctPasswordField.required = true;
+    } else {
+      admissionField.style.display = "block";
+      admissionField.required = true;
+      ctPasswordField.style.display = "none";
+      ctPasswordField.required = false;
+    }
+  });
+
+  form.addEventListener("submit", function (e) {
     e.preventDefault();
 
-    const role = document.getElementById("role").value;
+    const role = roleSelect.value;
     const firstname = document.getElementById("firstname").value.trim();
-    const admission = document.getElementById("admission").value.trim();
+    const admission = admissionField.value.trim();
+    const ctPassword = ctPasswordField.value.trim();
 
-    if (!role || !firstname || !admission) {
-      alert("Please fill in all fields");
+    if (!role || !firstname || (role !== "classteacher" && !admission)) {
+      alert("Please fill in all required fields");
       return;
     }
 
-    // Validate ID format
-    const validFormat = {
-      student: /^[A-Z0-9]+$/i,
-      teacher: /^T[A-Z0-9]+$/i,
-      classteacher: /^CT[A-Z0-9]+$/i,
-      admin: /^ADMIN[A-Z0-9]+$/i
-    };
+    let users = JSON.parse(localStorage.getItem("registeredUsers") || "[]");
+    let user;
 
-    if (!validFormat[role].test(admission)) {
-      alert(`Invalid ID format for ${role}. Please check the format guide.`);
-      return;
-    }
+    // ===============================
+    // FIND USER BY NAME AND ID
+    // ===============================
+    if (role === "classteacher") {
+      // Find a teacher who is assigned as class teacher
+      user = users.find(
+        (u) =>
+          u.firstname.toLowerCase() === firstname.toLowerCase() &&
+          u.isClassTeacher === true
+      );
 
-    try {
-      let users = JSON.parse(localStorage.getItem("registeredUsers") || "[]");
-      console.log("Searching for user:", { role, firstname, admission });
+      if (!user) {
+        alert("You are not assigned as a class teacher.");
+        return;
+      }
 
-      // ============================
-      // FIND USER (Teacher or ClassTeacher)
-      // ============================
-      let user = users.find(u =>
-        u.firstname.toLowerCase() === firstname.toLowerCase() &&
-        u.admission.toLowerCase() === admission.toLowerCase()
+      if (ctPassword !== user.ct_password) {
+        alert("Incorrect Class Teacher password!");
+        return;
+      }
+    } else {
+      // Normal roles (student, teacher, admin)
+      user = users.find(
+        (u) =>
+          u.firstname.toLowerCase() === firstname.toLowerCase() &&
+          u.admission.toLowerCase() === admission.toLowerCase()
       );
 
       if (!user) {
@@ -51,66 +83,45 @@ document.addEventListener("DOMContentLoaded", function() {
         return;
       }
 
-      // ============================
-      // ROLE VALIDATION LOGIC
-      // ============================
-      let effectiveRole = role;
-
-      if (role === "classteacher") {
-        // If they are trying to log in as class teacher
-        if (user.isClassTeacher && user.ct_password) {
-          effectiveRole = "classteacher";
-        } else {
-          alert("You are not assigned as a class teacher.");
-          return;
-        }
+      if (role === "classteacher" && !user.isClassTeacher) {
+        alert("You are not assigned as a class teacher.");
+        return;
       }
+    }
 
-      // ============================
-      // TEACHER DUAL LOGIN LOGIC
-      // ============================
-      // Allow teacher to log in with teacher ID or CT password
-      if (role === "teacher") {
-        // Normal teacher login (uses admission)
-        effectiveRole = "teacher";
-      } else if (role === "classteacher") {
-        // Class teacher login (requires CT password)
-        const enteredPass = prompt("Enter your Class Teacher password (starts with CT):");
-        if (enteredPass !== user.ct_password) {
-          alert("Incorrect Class Teacher password!");
-          return;
-        }
-      }
+    // ===============================
+    // DETERMINE EFFECTIVE ROLE
+    // ===============================
+    let effectiveRole = role;
+    if (role === "classteacher" && user.isClassTeacher) {
+      effectiveRole = "classteacher";
+    } else if (role === "teacher") {
+      effectiveRole = "teacher";
+    }
 
-      // ============================
-      // SAVE SESSION + REDIRECT
-      // ============================
-      const userWithFlags = {
-        ...user,
-        role: effectiveRole,
-        isTeacher: effectiveRole === "teacher",
-        isClassTeacher: effectiveRole === "classteacher",
-        isAdmin: effectiveRole === "admin"
-      };
+    // ===============================
+    // SAVE SESSION + REDIRECT
+    // ===============================
+    const userWithFlags = {
+      ...user,
+      role: effectiveRole,
+      isTeacher: effectiveRole === "teacher",
+      isClassTeacher: effectiveRole === "classteacher",
+      isAdmin: effectiveRole === "admin"
+    };
 
-      localStorage.setItem("loggedInUser", JSON.stringify(userWithFlags));
-      localStorage.setItem("userRole", effectiveRole);
+    localStorage.setItem("loggedInUser", JSON.stringify(userWithFlags));
+    localStorage.setItem("userRole", effectiveRole);
 
-      console.log("Login successful:", userWithFlags);
+    console.log("Login successful:", userWithFlags);
 
-      // Redirect to appropriate dashboard
-      const redirect = redirectPaths[effectiveRole];
-      if (redirect) {
-        setTimeout(() => {
-          window.location.href = redirect;
-        }, 400);
-      } else {
-        alert("Invalid role configuration.");
-      }
-
-    } catch (error) {
-      console.error("Login error:", error);
-      alert("An error occurred during login. Please try again.");
+    const redirect = redirectPaths[effectiveRole];
+    if (redirect) {
+      setTimeout(() => {
+        window.location.href = redirect;
+      }, 400);
+    } else {
+      alert("Invalid role configuration.");
     }
   });
 });

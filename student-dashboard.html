@@ -63,14 +63,12 @@
       </select>
     </label>
 
-    <label>
-      Year:
-      <select id="yearFilter">
-        <option value="all">All</option>
-        <option value="2024">2024</option>
-        <option value="2025">2025</option>
-      </select>
-    </label>
+  Year:
+  <select id="yearFilter">
+    <option value="all">All</option>
+  </select>
+</label>
+
 
     <button id="applyFilter" class="btn small primary">Apply</button>
     <select id="assessmentFilter">
@@ -87,39 +85,10 @@
   <div id="studentMarks">Loading...</div>
 </section>
 
-      <section id="studentSummary">
-        <p>Average Score: <span id="studentAvg">N/A</span>%</p>
-        <p>Overall Level: <span id="studentLevel">N/A</span></p>
-        <p>Class Rank: <span id="classRank">N/A</span></p>
-      </section>
+    
 
-      <section id="strengthWeakness" class="analysis-section">
-        <h3>Highlights</h3>
-        <p><strong>Top Strengths:</strong> <span id="topStrengths">Loading...</span></p>
-        <p><strong>Areas to Improve:</strong> <span id="areasImprove">Loading...</span></p>
-      </section>
+      
 
-      <section id="remarksSection">
-        <h3>Teacher & Headteacher Remarks</h3>
-        <p><strong>Class Teacher’s Remarks:</strong> <span id="teacherRemarks">Great progress this term!</span></p>
-        <p><strong>Headteacher’s Remarks:</strong> <span id="headRemarks">Keep up the good work.</span></p>
-
-        <div class="signatures">
-          <div>
-            <p>_________________________</p>
-            <p>Class Teacher</p>
-          </div>
-          <div>
-            <p>_________________________</p>
-            <p>Headteacher</p>
-          </div>
-        </div>
-      </section>
-
-      <section id="aiFeedbackSection">
-        <h3>AI Feedback Summary</h3>
-        <pre id="aiFeedback" style="white-space: pre-wrap;">Loading feedback...</pre>
-      </section>
 
       <div class="report-actions">
         <button class="btn primary" onclick="window.location.href='report.html'">View Report Form</button><button id="syncReportBtn">🔄 Sync Report Data</button>
