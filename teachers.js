@@ -134,21 +134,34 @@ document.addEventListener("DOMContentLoaded", () => {
       header.textContent = `Grade: ${grade}, Term: ${term}, Year: ${year}, Assessment: ${assessment}`;
       wrapper.appendChild(header);
 
-      // --- Export Buttons for this group ---
-      const exportDiv = document.createElement("div");
-      exportDiv.classList.add("export-btns");
+      // --- Export & Delete Buttons for this group ---
+      const controlDiv = document.createElement("div");
+      controlDiv.classList.add("export-btns");
 
       const excelBtn = document.createElement("button");
       excelBtn.textContent = "📊 Export Excel";
       excelBtn.addEventListener("click", () => exportToExcel(list, `Grade${grade}_${term}_${year}_Assessment${assessment}`));
-      exportDiv.appendChild(excelBtn);
+      controlDiv.appendChild(excelBtn);
 
       const pdfBtn = document.createElement("button");
       pdfBtn.textContent = "📄 Export PDF";
       pdfBtn.addEventListener("click", () => exportToPDF(list, `Grade${grade}_${term}_${year}_Assessment${assessment}`));
-      exportDiv.appendChild(pdfBtn);
+      controlDiv.appendChild(pdfBtn);
 
-      wrapper.appendChild(exportDiv);
+      const deleteGroupBtn = document.createElement("button");
+      deleteGroupBtn.textContent = "🗑️ Delete Submission";
+      deleteGroupBtn.style.background = "#e74c3c";
+      deleteGroupBtn.style.color = "#fff";
+      deleteGroupBtn.addEventListener("click", () => {
+        if (!confirm("Delete this entire submission group?")) return;
+        let allMarks = JSON.parse(localStorage.getItem("submittedMarks") || "[]");
+        allMarks = allMarks.filter(m => !list.includes(m));
+        localStorage.setItem("submittedMarks", JSON.stringify(allMarks));
+        displaySubmittedMarks();
+      });
+      controlDiv.appendChild(deleteGroupBtn);
+
+      wrapper.appendChild(controlDiv);
 
       const table = document.createElement("table");
       table.innerHTML = `

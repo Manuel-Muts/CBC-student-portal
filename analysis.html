@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Class Analysis - CBC Portal</title>
-  
   <link rel="stylesheet" href="analysis.css" />
 </head>
 <body>
@@ -18,7 +17,8 @@
         <button id="logoutBtn" class="btn danger small">Logout</button>
       </div>
     </header>
- <div id="teacherInfo" class="teacher-info"></div>
+
+    <div id="teacherInfo" class="teacher-info"></div>
 
     <div id="notAllowed" class="card muted-center hidden">
       <div class="small">Only class teachers may view class analysis.</div>
@@ -27,109 +27,107 @@
     <div id="analysisWrap" class="hidden">
       <div class="card">
         <div class="analysis-controls">
+          <div class="control-block">
+            <label for="gradeFilter">Grade (Your Class):</label>
+            <select id="gradeFilter" class="small" disabled>
+              <option value="">Loading...</option>
+            </select>
 
-  <div class="control-block">
-    <label for="gradeFilter">Grade (Your Class):</label>
-    <select id="gradeFilter" class="small" disabled>
-      <option value="">Loading...</option>
-    </select>
+            <label for="termFilter">Select Term:</label>
+            <select id="termFilter" class="small">
+              <option value="">All Terms</option>
+              <option value="Term 1">Term 1</option>
+              <option value="Term 2">Term 2</option>
+              <option value="Term 3">Term 3</option>
+            </select>
 
-    <label for="termFilter">Select Term:</label>
-    <select id="termFilter" class="small">
-      <option value="">All Terms</option>
-      <option value="Term 1">Term 1</option>
-      <option value="Term 2">Term 2</option>
-      <option value="Term 3">Term 3</option>
-    </select>
+            <label for="yearFilter">Select Year:</label>
+            <input type="number" id="yearFilter" class="small" min="2025" max="2090" value="2025" />
 
-    <label for="yearFilter">Select Year:</label>
-    <input type="number" id="yearFilter" class="small" min="2025" max="2090" value="2025" />
+            <label for="assessmentFilter">Assessment:</label>
+            <select id="assessmentFilter" class="small">
+              <option value="all">All</option>
+              <option value="1">Assessment 1</option>
+              <option value="2">Assessment 2</option>
+              <option value="3">Assessment 3</option>
+              <option value="4">Assessment 4</option>
+              <option value="5">Assessment 5</option>
+            </select>
 
-    <label for="assessmentFilter">Assessment:</label>
-    <select id="assessmentFilter" class="small">
-      <option value="all">All</option>
-      <option value="1">Assessment 1</option>
-      <option value="2">Assessment 2</option>
-      <option value="3">Assessment 3</option>
-      <option value="4">Assessment 4</option>
-      <option value="5">Assessment 5</option>
-    </select>
-
-    <button id="applyFiltersBtn" class="btn small">Select</button>
-  </div>
-
-  <div class="button-block">
-    <button id="generateReport" class="btn small">Generate Report</button>
-  </div>
-</div>
-
-
-      <div class="control-block">
-        <label>Analysis Type:</label>
-        <select id="analysisType">
-          <option value="overview">Overview (ranking + subject means)</option>
-          <option value="detailed">Detailed (student subject breakdown)</option>
-        </select>
-      </div>
-
-      <div class="control-block">
-        <label>Include only subjects taught by me?</label>
-        <select id="onlyMySubjects">
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-        </select>
-      </div>
-
-      <div class="grid">
-        <div>
-          <div class="card" id="rankingCard">
-            <h3>Class Ranking</h3>
-            <div id="rankingTableWrap"></div>
+            <button id="applyFiltersBtn" class="btn small">Select</button>
           </div>
 
-          <div class="card" id="subjectCard">
-            <h3>Subject Performance (Means)</h3>
-            <div id="subjectTableWrap"></div>
-          </div>
-
-          <div class="card hidden" id="detailsCard">
-            <h3>Student Details</h3>
-            <div id="detailsTableWrap"></div>
+          <div class="button-block">
+            <button id="generateReport" class="btn small">Generate Report</button>
           </div>
         </div>
 
-        <aside>
-          <div class="card">
-            <h4>Quick Stats</h4>
-            <div class="small">Class average: <strong id="classMean">-</strong></div>
-            <div class="small">Highest mean: <strong id="topMean">-</strong></div>
-            <div class="small">Lowest mean: <strong id="lowMean">-</strong></div>
+        <div class="control-block">
+          <label>Analysis Type:</label>
+          <select id="analysisType">
+            <option value="overview">Overview (ranking + subject means)</option>
+            <option value="detailed">Detailed (student subject breakdown)</option>
+          </select>
+        </div>
 
-            <div class="spacer"></div>
+        <div class="control-block">
+          <label>Include only subjects taught by me?</label>
+          <select id="onlyMySubjects">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
 
-            <div class="small">Top subject: <strong id="topSubject">-</strong></div>
-            <div class="small">Weakest subject: <strong id="lowSubject">-</strong></div>
+        <div class="grid">
+          <div>
+            <div class="card" id="rankingCard">
+              <h3>Class Ranking</h3>
+              <div id="rankingTableWrap"></div>
+            </div>
 
-            <div class="spacer"></div>
+            <div class="card" id="subjectCard">
+              <h3>Subject Performance (Means)</h3>
+              <div id="subjectTableWrap"></div>
+            </div>
 
-            <div class="small">Records analysed: <strong id="recordsCount">0</strong></div>
-
-            <div class="spacer"></div>
+            <div class="card hidden" id="detailsCard">
+              <h3>Student Details</h3>
+              <div id="detailsTableWrap"></div>
+            </div>
           </div>
-        </aside>
+
+          <aside>
+            <div class="card">
+              <h4>Quick Stats</h4>
+              <div class="small">Class average: <strong id="classMean">-</strong></div>
+              <div class="small">Highest mean: <strong id="topMean">-</strong></div>
+              <div class="small">Lowest mean: <strong id="lowMean">-</strong></div>
+              <div class="spacer"></div>
+              <div class="small">Top subject: <strong id="topSubject">-</strong></div>
+              <div class="small">Weakest subject: <strong id="lowSubject">-</strong></div>
+              <div class="spacer"></div>
+              <div class="small">Records analysed: <strong id="recordsCount">0</strong></div>
+              <div class="spacer"></div>
+            </div>
+          </aside>
+        </div>
       </div>
     </div>
   </div>
-<div class="card">
-  <h4>Class Mean Trend (Across Assessments)</h4>
-  <canvas id="classTrendChart" height="120"></canvas>
-</div>
+
+  <div class="card">
+    <h4>Class Mean Trend (Across Assessments)</h4>
+    <canvas id="classTrendChart" height="120"></canvas>
+  </div>
 
   <!-- Libraries (CDN) -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- html2pdf bundle -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512‑GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
   <script src="analysis.js"></script>
 </body>
 </html>
