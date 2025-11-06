@@ -149,17 +149,30 @@ document.addEventListener("DOMContentLoaded", () => {
       controlDiv.appendChild(pdfBtn);
 
       const deleteGroupBtn = document.createElement("button");
-      deleteGroupBtn.textContent = "🗑️ Delete Submission";
-      deleteGroupBtn.style.background = "#e74c3c";
-      deleteGroupBtn.style.color = "#fff";
-      deleteGroupBtn.addEventListener("click", () => {
-        if (!confirm("Delete this entire submission group?")) return;
-        let allMarks = JSON.parse(localStorage.getItem("submittedMarks") || "[]");
-        allMarks = allMarks.filter(m => !list.includes(m));
-        localStorage.setItem("submittedMarks", JSON.stringify(allMarks));
-        displaySubmittedMarks();
-      });
-      controlDiv.appendChild(deleteGroupBtn);
+deleteGroupBtn.textContent = "🗑️ Delete Submission";
+deleteGroupBtn.style.background = "#e74c3c";
+deleteGroupBtn.style.color = "#fff";
+deleteGroupBtn.addEventListener("click", () => {
+  if (!confirm("Delete this entire submission group?")) return;
+
+  let allMarks = JSON.parse(localStorage.getItem("submittedMarks") || "[]");
+
+  // Remove all marks that match this group
+  allMarks = allMarks.filter(m => {
+    return !list.some(l =>
+      m.admissionNo === l.admissionNo &&
+      m.grade === l.grade &&
+      m.term === l.term &&
+      m.year === l.year &&
+      m.subject === l.subject &&
+      m.assessment === l.assessment
+    );
+  });
+
+   localStorage.setItem("submittedMarks", JSON.stringify(allMarks));
+   displaySubmittedMarks();
+    });
+  controlDiv.appendChild(deleteGroupBtn);
 
       wrapper.appendChild(controlDiv);
 

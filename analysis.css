@@ -561,7 +561,7 @@ th {
 .pdf-container th,
 .pdf-container td {
   padding: 7px 2px;
-  font-size: 10px;
+  font-size: 7px;
   overflow-wrap: break-word;
   text-align: center;
 }

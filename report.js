@@ -59,8 +59,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const latestMark = sortedMarks[0];
   const currentYear = latestMark.year || new Date().getFullYear();
 
-  setText("studentTerm", latestMark.term || "N/A");
-  setText("studentYear", currentYear);
+  // Hide Term and Year if empty
+  if (!latestMark.term && document.getElementById("studentTerm")) {
+    document.getElementById("studentTerm").closest("p")?.remove();
+  } else {
+    setText("studentTerm", latestMark.term || "");
+  }
+  if (!latestMark.year && document.getElementById("studentYear")) {
+    document.getElementById("studentYear").closest("p")?.remove();
+  } else {
+    setText("studentYear", currentYear);
+  }
 
   // =============================
   // ASSESSMENT DISPLAY
@@ -78,7 +87,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // =============================
-  // POPULATE MARKS TABLE
+  // REMOVE TERM & YEAR HEADERS IF THEY EXIST
+  // =============================
+  document.querySelectorAll("#marksTable th").forEach(th => {
+    const text = th.textContent.trim().toLowerCase();
+    if (text === "term" || text === "year") {
+      th.remove();
+    }
+  });
+
+  // =============================
+  // POPULATE MARKS TABLE (Only 4 Columns)
   // =============================
   const tbody = document.querySelector("#marksTable tbody");
   if (!tbody) {
@@ -89,16 +108,23 @@ document.addEventListener("DOMContentLoaded", () => {
   tbody.innerHTML = "";
   let total = 0;
 
+  // Capitalize helper
+  function capitalizeWords(str) {
+    return str
+      .split(" ")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ");
+  }
+
   studentMarks.forEach(m => {
     const tr = document.createElement("tr");
     const score = Number(m.score || 0);
+    const subjectName = capitalizeWords((m.subject || "").replace(/-/g, " "));
     tr.innerHTML = `
-      <td>${(m.subject || "").replace(/-/g, " ")}</td>
+      <td>${subjectName}</td>
       <td>${score}</td>
       <td>${getCBCLevel(score)}</td>
       <td>${getSubjectRemark(score)}</td>
-      <td>${m.term || "N/A"}</td>
-      <td>${m.year || currentYear}</td>
     `;
     tbody.appendChild(tr);
     total += score;
@@ -107,96 +133,66 @@ document.addEventListener("DOMContentLoaded", () => {
   const mean = studentMarks.length
     ? (total / studentMarks.length).toFixed(1)
     : 0;
+
   setText("totalMarks", total.toFixed(0));
   setText("meanScore", mean);
-
   setText("teacherComment", getTeacherComment(mean));
   setText("headComment", getHeadteacherComment(mean));
 
- // =============================
-// CONTROL BUTTONS (External)
-// =============================
-const reportElement = document.querySelector(".report-container");
-const downloadBtn = document.getElementById("downloadBtn");
-const printBtn = document.getElementById("printBtn");
-const refreshBtn = document.getElementById("refreshBtn");
-
-// 🔄 Refresh
-if (refreshBtn) {
-  refreshBtn.addEventListener("click", () => window.location.reload());
-}
-
-// 🖨️ Print
-if (printBtn) {
-  printBtn.addEventListener("click", () => {
-    window.print();
-  });
-}
-
-// ⬇️ Download PDF
-if (downloadBtn) {
-  downloadBtn.addEventListener("click", () => {
-    if (!reportElement) return;
-
-    const grade = user.grade || "Grade";
-    const term = latestMark.term || "Term";
-    const assess = latestMark.assessment || "Assessment";
-    const filename = `Report_${grade}_${term}_${assess}_${currentYear}.pdf`;
-
-    // Temporarily hide external buttons
-    document.querySelector(".report-controls").style.display = "none";
-
-    const opt = {
-      margin: [0.3, 0.3, 0.3, 0.3],
-      filename,
-      image: { type: "jpeg", quality: 1 },
-      html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      pagebreak: { mode: ["avoid-all", "css", "legacy"] }
-    };
-
-    html2pdf()
-      .set(opt)
-      .from(reportElement)
-      .save()
-      .then(() => {
-        document.querySelector(".report-controls").style.display = "block";
-      });
-  });
-}
-
   // =============================
-  // PDF DOWNLOAD FUNCTION (Optimized)
+  // CONTROL BUTTONS
   // =============================
-  function downloadReportAsPDF() {
-    const element = document.querySelector(".report-container");
-    if (!element) return;
+  const reportElement = document.querySelector(".report-container");
+  const downloadBtn = document.getElementById("downloadBtn");
+  const printBtn = document.getElementById("printBtn");
+  const refreshBtn = document.getElementById("refreshBtn");
 
-    const grade = user.grade || "Grade";
-    const term = latestMark.term || "Term";
-    const assess = latestMark.assessment || "Assessment";
-    const filename = `Report_${grade}_${term}_${assess}_${currentYear}.pdf`;
+  // 🔄 Refresh
+  if (refreshBtn) {
+    refreshBtn.addEventListener("click", () => window.location.reload());
+  }
 
-    // Hide buttons before export
-    document.querySelectorAll(".print-btn, .refresh-btn").forEach(btn => btn.style.display = "none");
+  // 🖨️ Print
+  if (printBtn) {
+    printBtn.addEventListener("click", () => window.print());
+  }
 
-    const opt = {
-      margin: [0.3, 0.3, 0.3, 0.3],
-      filename: filename,
-      image: { type: "jpeg", quality: 1 },
-      html2canvas: {
-        scale: 2,
-        useCORS: true,
-        scrollY: 0,
-        windowWidth: document.documentElement.scrollWidth,
-      },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      pagebreak: { mode: ["avoid-all", "css", "legacy"] }
-    };
+  // ⬇️ Download PDF (exclude Action column)
+  if (downloadBtn) {
+    downloadBtn.addEventListener("click", () => {
+      if (!reportElement) return;
 
-    html2pdf().set(opt).from(element).save().then(() => {
-      // Restore buttons after export
-      document.querySelectorAll(".print-btn, .refresh-btn").forEach(btn => btn.style.display = "block");
+      // Hide "Action" column if exists
+      document.querySelectorAll("#marksTable th:nth-last-child(1), #marksTable td:nth-last-child(1)")
+        .forEach(cell => (cell.style.display = "none"));
+
+      // Temporarily hide external buttons
+      document.querySelector(".report-controls").style.display = "none";
+
+      const grade = user.grade || "Grade";
+      const term = latestMark.term || "";
+      const assess = latestMark.assessment || "Assessment";
+      const filename = `Report_${grade}_${assess}_${currentYear}.pdf`;
+
+      const opt = {
+        margin: [0.3, 0.3, 0.3, 0.3],
+        filename,
+        image: { type: "jpeg", quality: 1 },
+        html2canvas: { scale: 2, useCORS: true, scrollY: 0 },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: ["avoid-all", "css", "legacy"] },
+      };
+
+      html2pdf()
+        .set(opt)
+        .from(reportElement)
+        .save()
+        .then(() => {
+          // Restore buttons & hidden column
+          document.querySelector(".report-controls").style.display = "block";
+          document.querySelectorAll("#marksTable th, #marksTable td")
+            .forEach(cell => (cell.style.display = ""));
+        });
     });
   }
 

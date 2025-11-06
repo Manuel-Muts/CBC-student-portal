@@ -5,6 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Class Analysis - CBC Portal</title>
   <link rel="stylesheet" href="analysis.css" />
+  <style>
+    .ai-feedback {
+      background: #f8f9fa;
+      padding: 10px;
+      border-left: 4px solid #007bff;
+      margin-top: 15px;
+      font-size: 0.9rem;
+      border-radius: 5px;
+    }
+    .highlight-box {
+      background: #eef6ff;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+    .highlight-box strong {
+      color: #004a99;
+    }
+    .spacer {
+      margin: 8px 0;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -107,7 +129,9 @@
               <div class="small">Weakest subject: <strong id="lowSubject">-</strong></div>
               <div class="spacer"></div>
               <div class="small">Records analysed: <strong id="recordsCount">0</strong></div>
-              <div class="spacer"></div>
+              <div class="highlight-box">
+                AI feedback will appear  after report generation.
+              </div>
             </div>
           </aside>
         </div>
@@ -125,9 +149,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- html2pdf bundle -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512‑GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous"></script>
   <script src="analysis.js"></script>
 </body>
 </html>

@@ -70,3 +70,24 @@ body {
   background: #aaa;
   cursor: not-allowed;
 }
+
+.export-btn {
+  background-color: #1abc9c;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  margin-top: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.export-btn:hover {
+  background-color: #16a085;
+}
+.report-footer {
+  text-align: right;
+  margin-top: 10px;
+  font-size: 14px;
+  font-style: italic;
+  color: #555;
+}
