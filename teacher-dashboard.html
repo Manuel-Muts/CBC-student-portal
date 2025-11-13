@@ -81,8 +81,14 @@
           <select id="assessmentSelect" required></select>
         </div>
 
+
         <button type="submit" class="btn">Submit Marks</button>
       </form>
+      <div class="form-group undo-redo-buttons">
+          <!-- Undo/Redo Buttons -->
+          <button type="button" id="undoBtn">↩️ Undo</button>
+          <button type="button" id="redoBtn">↪️ Redo</button>
+        </div>
     </section>
 
     <!-- =================== SUBMITTED MARKS TABLES =================== -->
@@ -93,7 +99,7 @@
 
     <!-- =================== STUDY MATERIALS =================== -->
     <section class="materials-section">
-      <h2>Upload Study Materials</h2>
+      <h2>Upload Study Materials/Assignments</h2>
       <form id="materials-form">
         <div class="form-group">
           <label>Grade Level</label>

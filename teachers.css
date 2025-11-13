@@ -272,3 +272,46 @@ form {
   background: #f8f9fa;
   font-weight: 600;
 }
+
+.marks-group .delete-group-btn {
+  background: #f39c12;      /* Orange to stand out */
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  margin-left: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.marks-group .delete-group-btn:hover {
+  background: #e67e22;      /* Darker orange on hover */
+}
+
+/* Undo/Redo buttons container */
+.undo-redo-buttons {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+/* Undo/Redo buttons style */
+#undoBtn, #redoBtn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #3498db;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#undoBtn:hover, #redoBtn:hover {
+  background-color: #2980b9;
+}
+
+/* Align Undo/Redo buttons inline with Submit */
+.marks-section form .btn {
+  margin-left: 10px;
+}

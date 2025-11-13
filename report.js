@@ -28,6 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const el = document.getElementById(id);
     if (el) el.textContent = value;
   };
+// =============================
+// ASSESSMENT LABEL HELPER
+// =============================
+function getAssessmentLabel(value) {
+  return value == 5 ? "End Term" : `Assessment ${value}`;
+}
 
   // =============================
   // AUTO-UPDATE GRADE FROM MARKS
@@ -78,11 +84,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const existing = document.getElementById("studentAssessment");
     if (!existing) {
       const p = document.createElement("p");
-      p.innerHTML = `<strong>Assessment:</strong> <span id="studentAssessment">${latestMark.assessment}</span>`;
+      p.innerHTML = `<strong>Assessment:</strong> <span id="studentAssessment">${getAssessmentLabel(latestMark.assessment)}</span>`;
       const infoSection = document.querySelector(".student-info");
       if (infoSection) infoSection.appendChild(p);
     } else {
-      setText("studentAssessment", latestMark.assessment);
+      setText("studentAssessment", getAssessmentLabel(latestMark.assessment));
     }
   }
 
@@ -171,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const grade = user.grade || "Grade";
       const term = latestMark.term || "";
-      const assess = latestMark.assessment || "Assessment";
+      const assess = getAssessmentLabel(latestMark.assessment || "Assessment");
       const filename = `Report_${grade}_${assess}_${currentYear}.pdf`;
 
       const opt = {

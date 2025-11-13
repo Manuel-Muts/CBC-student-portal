@@ -12,6 +12,31 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   if (!user || user.role !== "student") return (window.location.href = "login.html");
 
+  // --- PERSONALIZED GREETING MESSAGE ---
+  const welcomeNameEl = document.getElementById("welcomeName");
+  if (welcomeNameEl && user.firstname) {
+    const now = new Date();
+    const hour = now.getHours();
+    let greeting;
+    if (hour < 12) greeting = "Good morning";
+    else if (hour < 17) greeting = "Good afternoon";
+    else greeting = "Good evening";
+    welcomeNameEl.textContent = `${greeting}, ${user.firstname}`;
+  }
+
+  // --- SHOW TOAST MESSAGE ---
+  function showToast(message) {
+    const toast = document.getElementById("toastMessage");
+    if (!toast) return;
+    toast.textContent = message;
+    toast.style.display = "block";
+    toast.style.opacity = "1";
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      setTimeout(() => (toast.style.display = "none"), 600);
+    }, 4000);
+  }
+
   // --- YEAR FILTER POPULATION ---
   const yearFilter = document.getElementById("yearFilter");
   if (yearFilter) {
@@ -45,27 +70,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const generateTopStrengths = (list) => {
     const avgs = getSubjectAverages(list);
-    return avgs.slice(0, 3).map((s) => `${s.subject} (${s.avg.toFixed(0)})`).join(", ") || "N/A";
+    return (
+      avgs
+        .slice(0, 3)
+        .map((s) => `${s.subject} (${s.avg.toFixed(0)})`)
+        .join(", ") || "N/A"
+    );
   };
 
   const generateAreasToImprove = (list) => {
     const avgs = getSubjectAverages(list);
-    return avgs.slice(-3).reverse().map((s) => `${s.subject} (${s.avg.toFixed(0)})`).join(", ") || "N/A";
+    return (
+      avgs
+        .slice(-3)
+        .reverse()
+        .map((s) => `${s.subject} (${s.avg.toFixed(0)})`)
+        .join(", ") || "N/A"
+    );
   };
 
   const generateWiseFeedback = (list) => {
     if (!list.length) return "No marks yet to generate feedback.";
-    const avg = list.reduce((s, m) => s + Number(m.score || 0), 0) / list.length;
+    const avg =
+      list.reduce((s, m) => s + Number(m.score || 0), 0) / list.length;
     const level = getCBCLevel(avg);
     let advice = "";
     if (avg >= 85)
-      advice = "Excellent performance! Keep challenging yourself and consider helping classmates to strengthen understanding.";
+      advice =
+        "Excellent performance! Keep challenging yourself and consider helping classmates to strengthen understanding.";
     else if (avg >= 70)
-      advice = "Good work! Focus on subjects where improvement is possible and maintain consistent study habits.";
+      advice =
+        "Good work! Focus on subjects where improvement is possible and maintain consistent study habits.";
     else if (avg >= 50)
-      advice = "Fair performance. Prioritize weaker areas, practice regularly, and seek guidance where needed.";
+      advice =
+        "Fair performance. Prioritize weaker areas, practice regularly, and seek guidance where needed.";
     else
-      advice = "Performance below expectations. Seek extra support, focus on fundamentals, and stay disciplined in your studies.";
+      advice =
+        "Performance below expectations. Seek extra support, focus on fundamentals, and stay disciplined in your studies.";
 
     return `CBC Level: ${level}. Advice: ${advice}`;
   };
@@ -88,12 +129,21 @@ document.addEventListener("DOMContentLoaded", () => {
       : "Critical performance. Immediate attention required.";
   };
 
+  // --- ASSESSMENT LABEL HELPER ---
+  const getAssessmentLabel = (value) => {
+    return value == 5 ? "End Term" : `Assessment ${value}`;
+  };
+
   // --- RANK CALCULATION ---
   const calculateRank = (list, allMarks) => {
     if (!list.length) return "N/A";
     const { grade, term, year, assessment } = list[0];
     const sameGroup = allMarks.filter(
-      (m) => m.grade === grade && m.term === term && m.year === year && m.assessment === assessment
+      (m) =>
+        m.grade === grade &&
+        m.term === term &&
+        m.year === year &&
+        m.assessment === assessment
     );
 
     const totals = {};
@@ -112,22 +162,65 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- MAIN DISPLAY FUNCTION ---
   const marksContainer = document.getElementById("studentMarks");
+
   const displayStudentTables = () => {
     marksContainer.innerHTML = "";
     const allMarks = JSON.parse(localStorage.getItem("submittedMarks") || "[]");
-    const studentMarks = allMarks.filter((m) => m.admissionNo === user.admission);
+    const studentMarks = allMarks.filter(
+      (m) => m.admissionNo === user.admission
+    );
 
+    // --- AUTO-DETECT LATEST TERM, YEAR, AND ASSESSMENT ---
+    if (studentMarks.length > 0) {
+      const latest = studentMarks.reduce((a, b) =>
+        a.year > b.year
+          ? a
+          : a.year < b.year
+          ? b
+          : a.term > b.term
+          ? a
+          : a.term < b.term
+          ? b
+          : a.assessment > b.assessment
+          ? a
+          : b
+      );
+
+      const termSelect = document.getElementById("termFilter");
+      const yearSelect = document.getElementById("yearFilter");
+      const assessSelect = document.getElementById("assessmentFilter");
+
+      if (termSelect && latest.term) termSelect.value = String(latest.term);
+      if (yearSelect && latest.year) yearSelect.value = String(latest.year);
+      if (assessSelect && latest.assessment)
+        assessSelect.value = String(latest.assessment);
+
+      // 🟢 Show friendly message
+      showToast(
+        `📊 Latest: Term ${latest.term}, ${latest.year} (${
+          latest.assessment == 5
+            ? "End Term"
+            : "Assessment " + latest.assessment
+        })`
+      );
+    }
+
+    if (typeof displaySubmittedMarks === "function") {
+      displaySubmittedMarks();
+    }
+
+    // --- FILTER CURRENT MARKS ---
     const termValue = document.getElementById("termFilter").value;
     const yearValue = document.getElementById("yearFilter").value;
     const assessValue = document.getElementById("assessmentFilter").value;
 
-    const filteredMarks = studentMarks.filter((m) => {
-      return (
-        (termValue === "all" || m.term === termValue) &&
-        (yearValue === "all" || m.year === yearValue) &&
-        (assessValue === "all" || m.assessment === assessValue)
-      );
-    });
+    const filteredMarks = studentMarks.filter(
+      (m) =>
+        (termValue === "all" || String(m.term) === String(termValue)) &&
+        (yearValue === "all" || String(m.year) === String(yearValue)) &&
+        (assessValue === "all" ||
+          String(m.assessment) === String(assessValue))
+    );
 
     if (!filteredMarks.length) {
       marksContainer.textContent = "No marks found for selected filters.";
@@ -153,7 +246,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <p><strong>Grade/Class:</strong> ${grade}</p>
           <p><strong>Term:</strong> ${term}</p>
           <p><strong>Year:</strong> ${year}</p>
-          <p><strong>Assessment:</strong> ${assess}</p>
+          <p><strong>Assessment:</strong> ${getAssessmentLabel(assess)}</p>
           <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
         </div>
       `;
@@ -163,7 +256,11 @@ document.addEventListener("DOMContentLoaded", () => {
       syncBtn.classList.add("sync-btn");
       syncBtn.addEventListener("click", () => {
         localStorage.setItem("studentReportMarks", JSON.stringify(list));
-        alert(`✅ Synced ${grade} ${term} (${year}) - Assessment ${assess} to report form!`);
+        alert(
+          `✅ Synced ${grade} ${term} (${year}) - ${getAssessmentLabel(
+            assess
+          )} to report form!`
+        );
       });
       wrapper.appendChild(syncBtn);
 
@@ -226,19 +323,24 @@ document.addEventListener("DOMContentLoaded", () => {
       `;
       wrapper.appendChild(bottom);
 
-      // ✅ Add spacing AFTER content is inserted
-      bottom.querySelectorAll(".average-score, .overall-level, .class-rank, .highlights, .remarks, .ai-summary").forEach((sec) => {
-        sec.style.marginTop = "14px";
-        sec.style.marginBottom = "14px";
-        sec.style.lineHeight = "1.6";
-      });
+      bottom
+        .querySelectorAll(
+          ".average-score, .overall-level, .class-rank, .highlights, .remarks, .ai-summary"
+        )
+        .forEach((sec) => {
+          sec.style.marginTop = "14px";
+          sec.style.marginBottom = "14px";
+          sec.style.lineHeight = "1.6";
+        });
 
       marksContainer.appendChild(wrapper);
     });
   };
 
   // --- FILTER BUTTON ---
-  document.getElementById("applyFiltersBtn")?.addEventListener("click", displayStudentTables);
+  document
+    .getElementById("applyFiltersBtn")
+    ?.addEventListener("click", displayStudentTables);
 
   // --- REFRESH BUTTON ---
   const refreshBtn = document.getElementById("refreshBtn");
