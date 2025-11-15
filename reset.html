@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Password Reset - CBC Portal</title>
+<link rel="stylesheet" href="reset.css" />
+<meta name="theme-color" content="#0f766e">
+</head>
+<body>
+<main class="reset-wrap">
+<section class="card">
+<header class="card-head">
+<div class="logo">CBC Portal</div>
+<h1>Password Reset</h1>
+<p class="lead">For Admins, Teachers and Class Teachers only. Enter details to receive a temporary password by email.</p>
+</header>
+
+
+<form id="resetForm" class="reset-form" autocomplete="off">
+<label for="role">Role</label>
+<select id="role" required>
+<option value="">-- Select role --</option>
+<option value="admin">Admin</option>
+<option value="teacher">Teacher</option>
+<option value="classTeacher">Class Teacher</option>
+</select>
+
+
+<label for="firstname">First name</label>
+<input id="firstname" type="text" placeholder="Emmanuel" required />
+
+
+<label for="email">Registered email</label>
+<input id="email" type="email" placeholder="emmanuel@example.com" required />
+<button id="sendBtn" type="button" class="btn primary">Send reset email</button>
+
+
+<div id="feedback" class="feedback" aria-live="polite"></div>
+
+
+<p class="hint">After resetting you'll be redirected to the login page. If you don't receive the email check spam or contact your school admin.</p>
+
+
+<!--<div class="test-row">
+<button id="testEmailBtn" type="button" class="btn ghost">Send test email (dev)</button>
+<a href="login.html" class="btn link">Back to Login</a>
+</div>
+</form>-->
+<a href="login.html" class="btn link">Back to Login</a>
+
+<footer>
+  <p>&copy; Muts Tech <script>document.write(new Date().getFullYear());</script>. All rights reserved.</p>
+</footer>
+</main>
+
+
+<!-- EmailJS SDK -->
+<script src="email.min.js"></script>
+<script>
+// Replace with your EmailJS Public Key
+emailjs.init('nrjtW2YjjKe_HsgQX');
+</script>
+
+<script src="reset.js"></script>
+</body>
+</html>
