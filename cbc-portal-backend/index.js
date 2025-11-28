@@ -71,7 +71,7 @@ app.use(express.static(frontendPath, {
 }));
 
 // Catch-all for SPA routing
-app.get('*', (req, res) => {
+app.get('', (req, res) => {
   res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
